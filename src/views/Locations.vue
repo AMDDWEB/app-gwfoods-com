@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import apiLocations from '../axios/apiLocations';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonLabel, IonBadge, IonIcon, IonImg, IonSpinner, IonRefresher, IonRefresherContent } from '@ionic/vue';
@@ -80,7 +80,7 @@ const fetchLocations = async (isRefreshing = false) => {
   }
   try {
     const response = await apiLocations.getLocations();
-locations.value = response.map(transformLocationData); 
+    locations.value = response.map(transformLocationData); 
     locations.value = transformedLocations;
   } catch (error) {
     // Error handling without console.error
@@ -160,6 +160,8 @@ const doRefresh = async (event) => {
   await fetchLocations(true);
   event.target.complete();
 };
+
+defineComponent({ name: 'LocationsPage' });
 </script>
 
 <style scoped>

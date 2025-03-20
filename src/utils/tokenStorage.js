@@ -15,18 +15,16 @@ export const TokenStorage = {
     localStorage.setItem('refresh_token', refreshToken);
     
     // Get the current access token and storeId from localStorage
-    const currentToken = localStorage.getItem('access_token');
+    const token = localStorage.getItem('access_token');
     const storeId = localStorage.getItem('storeId');
     
-    if (currentToken && storeId) {
+    if (token && storeId) {
       try {
-        const response = await CustomerApi.checkForExistingUser(currentToken, storeId);
+        const response = await CustomerApi.checkForExistingUser(token, storeId);
         if (import.meta.env.VITE_HAS_MIDAX_COUPONS === "true") {
-          if (response.data && response.data[0] && response.data[0].CardNumber) {
-            localStorage.setItem('cardNumber', response.data[0].CardNumber);
+          if (response.data && response.data[0] && response.data[0].cardNumber) {
+            localStorage.setItem('cardNumber', response.data[0].cardNumber);
           }
-        } else {
-          localStorage.removeItem('cardNumber');
         }
       } catch (error) {
         console.error('Error checking for existing user:', error);
@@ -38,8 +36,19 @@ export const TokenStorage = {
   },
 
   clearTokens() {
+    // Clear all auth-related tokens
     localStorage.removeItem('access_token');
+    localStorage.removeItem('accessToken');
     localStorage.removeItem('refresh_token');
+    
+    // Clear user-related data
+    localStorage.removeItem('cardNumber');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('clippedCoupons');
+    
+    // Note: We don't clear storeId or selectedLocation as they are store preferences, not auth data
+    
     // Dispatch an event to notify other components
     window.dispatchEvent(new Event('tokensUpdated'));
   },

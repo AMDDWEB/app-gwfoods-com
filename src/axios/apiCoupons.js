@@ -45,9 +45,9 @@ class CouponsApi {
       params.offset = offset.toString();
       
       // Only add card number if authenticated
-      const CardNumber = localStorage.getItem('CardNumber');
-      if (CardNumber) {
-        params.Card_number = CardNumber;
+      const cardNumber = localStorage.getItem('cardNumber');
+      if (cardNumber) {
+        params.Card_number = cardNumber;
       }
     } else {
       // For AppCard system - load all at once
@@ -103,33 +103,55 @@ class CouponsApi {
     const hasAppCardCoupons = import.meta.env.VITE_HAS_APPCARD_COUPONS === "true";
 
     if (hasMidaxCoupons) {
-      const CardNumber = localStorage.getItem('cardNumber');
+      // Try both casing variants since there's inconsistency in the codebase
+      let cardNumber = localStorage.getItem('cardNumber');
+      if (!cardNumber) {
+        cardNumber = localStorage.getItem('cardNumber');
+      }
       const storeId = localStorage.getItem('storeId');
       
-      if (!CardNumber || !storeId) {
+      console.log('Clipping coupon with card_number:', cardNumber);
+      
+      if (!cardNumber || !storeId) {
         throw new Error('Missing required Midax parameters');
       }
       
-      // For Midax, use the provided call structure
-      const options = {
-        method: 'PUT',
-        url: '/clip-coupon',
-        data: {
-          offer_id: offerId.toString(),
-          store_id: storeId.toString(),
-          card_number: CardNumber.toString(),
-          app_id: import.meta.env.VITE_APP_ID,
-          provider: 'QUOT'
-        }
-      };
-
-      console.log('Clipping coupon with data:', options.data);
-
+      // First fetch the coupon details to get the provider
       try {
+        const couponResponse = await this.getCouponById(offerId);
+        let couponData = null;
+        
+        // Extract coupon data based on response structure
+        if (couponResponse.data && Array.isArray(couponResponse.data)) {
+          couponData = couponResponse.data[0];
+        } else if (couponResponse.data?.data && Array.isArray(couponResponse.data.data)) {
+          couponData = couponResponse.data.data[0];
+        }
+        
+        console.log('Coupon data for clip:', couponData);
+        
+        // Get provider from coupon data or default to "QUOT"
+        const provider = couponData?.provider || "QUOT";
+        console.log('Using provider:', provider, 'for coupon ID:', offerId);
+        
+        // For Midax, use the correct format with card_number as a parameter
+        const options = {
+          method: 'PUT',
+          url: '/clip-coupon',
+          params: {
+            card_number: cardNumber
+          },
+          data: JSON.stringify({
+            offer_id: offerId.toString(),
+            app_id: import.meta.env.VITE_APP_ID,
+            provider: provider
+          })
+        };
+
         const response = await couponsInstance.request(options);
         return response.data;
       } catch (error) {
-        console.error('Clip coupon error details:', error.response?.data);
+        console.error('Error clipping coupon:', error.response?.data);
         throw error;
       }
     } else if (hasAppCardCoupons) {

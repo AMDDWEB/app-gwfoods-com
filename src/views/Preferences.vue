@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, defineComponent } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonListHeader, IonItem, IonLabel, IonIcon, IonImg } from '@ionic/vue';
 import { Browser } from '@capacitor/browser';
 import { NativeSettings, AndroidSettings, IOSSettings } from 'capacitor-native-settings';
@@ -209,14 +209,6 @@ async function openWebsite() {
   });
 }
 
-// Open rewards points checker in browser
-async function openMyPoints() {
-  await Browser.open({
-    url: import.meta.env.VITE_SITE_URL + '/points',
-    presentationStyle: 'popover'
-  });
-}
-
 // Open Facebook page in browser popover
 async function openFacebook() {
   const facebookUrl = import.meta.env.VITE_FACEBOOK_URL;  // Facebook URL from .env
@@ -238,20 +230,6 @@ async function openInstagram() {
   try {
     await Browser.open({
       url: instagramUrl,
-      presentationStyle: 'popover'
-    });
-  } catch (error) {
-    // Handle error silently
-  }
-}
-
-// Open TikTok page in browser popover
-async function openTikTok() {
-  const tiktokUrl = import.meta.env.VITE_TIKTOK_URL; // TikTok URL from .env
-
-  try {
-    await Browser.open({
-      url: tiktokUrl,
       presentationStyle: 'popover'
     });
   } catch (error) {
@@ -377,12 +355,7 @@ onUnmounted(() => {
     });
 });
 
-const formatPhone = (phone) => {
-  if (!phone) return '';
-  const cleaned = phone.replace(/\D/g, '');
-  return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-};
-
+defineComponent({ name: 'PreferencesPage' });
 </script>
 
 <style scoped>

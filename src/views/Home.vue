@@ -76,7 +76,6 @@
 <script setup>
 import { ref, onMounted, watch, onUnmounted, computed, inject } from 'vue';
 import apiSliders from '../axios/apiSliders.js';
-import { useSliderDetails } from '@/composables/useSliderDetails';
 import sliderCarousel from '@/components/sliderCarousel.vue';
 import apiRecipes from '../axios/apiRecipes.js';
 import apiSpotlights from '../axios/apiSpotlights.js';
@@ -88,12 +87,11 @@ import PdfViewerModal from '@/components/PdfViewerModal.vue';
 import CouponsCarousel from '@/components/CouponsCarousel.vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonButtons, IonButton, IonIcon, IonTitle, IonImg, IonGrid, IonRow, IonCol } from '@ionic/vue';
 import { useRouter } from 'vue-router';
-import { Capacitor } from '@capacitor/core';
-import { popoverController } from '@ionic/vue';
 import { useSignupModal } from '@/composables/useSignupModal';
 import BarcodeModal from '@/components/BarcodeModal.vue';
 import apiNotifications from '../axios/apiNotifications.js'; // Import your API for notifactions
 import { onIonViewDidEnter, onIonViewWillEnter } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
 const showBarcodeModal = ref(false);
 const { getLoyaltyNumber, getCardNumber } = useSignupModal();
@@ -110,16 +108,10 @@ const sliders = ref([]);
 const recipes = ref([]);
 const spotlights = ref([]);
 const selectedLocation = ref(null);
-const locations = ref([]);
-const loading = ref(true);
 const logoUrl = ref(import.meta.env.VITE_PRIMARY_LOGO);
 const hasAppCardCoupons = ref(import.meta.env.VITE_HAS_APPCARD_COUPONS === "true");
 const hasMidaxCoupons = ref(import.meta.env.VITE_HAS_MIDAX_COUPONS === "true");
-const { transformAllSliders } = useSliderDetails();
 const notificationsAvailable = ref(false);
-
-// Add a loading state
-const isLoading = ref(false);
 
 // Add pdfModalState ref
 const pdfModalState = ref({
@@ -138,7 +130,8 @@ const isLocationModalOpen = ref(false);
 const router = useRouter();
 
 // Add a watch for debugging
-watch(selectedLocation, (newVal) => {
+watch(selectedLocation, () => {
+  // Empty watch function, no need for newVal parameter
 }, { deep: true });
 
 // Update the computed properties
@@ -269,7 +262,7 @@ async function getData() {
 const openPdfModal = (type) => {
   if (!selectedLocation.value) return;
 
-  let modalData = {
+  const modalData = {
     isOpen: true,
     url: '',
     type: '',
@@ -277,7 +270,7 @@ const openPdfModal = (type) => {
   };
 
   switch (type) {
-    case 'weekly':
+    case 'weekly': {
       const weeklyAd = selectedLocation.value.ads?.find(ad =>
         ad.ad_type.some(type => type.type_name === "Weekly Ad")
       );
@@ -287,7 +280,8 @@ const openPdfModal = (type) => {
         modalData.startDate = weeklyAd.ad_start_date;
       }
       break;
-    case 'rewards':
+    }
+    case 'rewards': {
       const rewardsAd = selectedLocation.value.ads?.find(ad =>
         ad.ad_type.some(type => type.type_name === "Reward")
       );
@@ -297,6 +291,7 @@ const openPdfModal = (type) => {
         modalData.startDate = rewardsAd.ad_start_date;
       }
       break;
+    }
   }
 
   pdfModalState.value = modalData;
@@ -342,21 +337,6 @@ const sliderImages = computed(() => {
   return Array.isArray(sliders.value) ? sliders.value.map(slider => slider.imageUrl) : [];
 });
 
-// Update your location finding function
-const findSelectedLocation = computed(() => {
-  if (!selectedLocation.value || !Array.isArray(locations.value)) {
-    return null;
-  }
-  return locations.value.find(loc => loc.id === selectedLocation.value.id) || null;
-});
-
-// Use it in your component
-const handleNotificationRequest = async () => {
-  if (requestNotificationPermission) {
-    await requestNotificationPermission();
-  }
-};
-
 // Fetch notifications
 const fetchNotifications = async () => {
   try {
@@ -383,6 +363,10 @@ onIonViewWillEnter(async () => {
   }
 });
 
+defineComponent({
+  name: 'HomePage',
+  // ... existing code ...
+});
 </script>
 
 

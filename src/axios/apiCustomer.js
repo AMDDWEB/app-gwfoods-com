@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { TokenStorage } from '../utils/tokenStorage';
 
 let customer;
 
@@ -80,7 +79,7 @@ class Customer {
         ReceiveEmail: profile.ReceiveEmail,
         ReceiveSMS: profile.ReceiveSMS,
         PreferedStore: profile.PreferedStore,
-        CardNumber: profile.CardNumber
+        cardNumber: profile.cardNumber
       }
     });
   }

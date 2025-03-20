@@ -40,12 +40,19 @@ watch(isAuthenticated, async (newValue) => {
       
       if (Array.isArray(userDetailsArray) && userDetailsArray.length > 0) {
         const userDetails = userDetailsArray[0]
-        if (userDetails.CardNumber) {
-          localStorage.setItem('cardNumber', userDetails.CardNumber)
+        if (userDetails.cardNumber) {
+          localStorage.setItem('cardNumber', userDetails.cardNumber)
         }
         if (userDetails.FirstName) {
           localStorage.setItem('firstName', userDetails.FirstName)
         }
+        
+        window.dispatchEvent(new CustomEvent('userSignedUp', {
+          detail: {
+            loyaltyNumber: userDetails.PhoneNumber || '',
+            cardNumber: userDetails.cardNumber || ''
+          }
+        }))
       }
     } catch (error) {
       console.error('Error checking user details:', error)
@@ -65,7 +72,14 @@ async function checkForExistingUser() {
       localStorage.setItem('userData', JSON.stringify(response.data))
       if (import.meta.env.VITE_HAS_MIDAX_COUPONS === "true") {
         if (response.data.card_number) {
-          localStorage.setItem('CardNumber', response.data.card_number)
+          localStorage.setItem('cardNumber', response.data.card_number)
+          
+          window.dispatchEvent(new CustomEvent('userSignedUp', {
+            detail: {
+              loyaltyNumber: response.data.phone_number || '',
+              cardNumber: response.data.card_number || ''
+            }
+          }))
         }
       }
     }

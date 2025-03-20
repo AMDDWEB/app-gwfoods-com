@@ -122,10 +122,8 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import apiLocations from '../axios/apiLocations';
 import { Share } from '@capacitor/share';
-import { useDateFormat } from '../composables/useDateFormat';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonLabel, IonBadge, IonIcon, IonAlert, IonSpinner, IonRefresher, IonRefresherContent, IonButton, IonButtons, IonTitle, IonGrid, IonRow, IonCol } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonLabel, IonBadge, IonIcon, IonSpinner, IonButton, IonButtons, IonTitle, IonGrid, IonRow, IonCol, alertController } from '@ionic/vue';
 import { Capacitor } from '@capacitor/core';
-import { alertController } from '@ionic/vue';
 import PdfViewerModal from '../components/PdfViewerModal.vue';
 import { useLocationDetails } from '@/composables/useLocationDetails';
 
@@ -136,10 +134,9 @@ const props = defineProps(['id']);
 const locationData = ref(null);
 const loading = ref(true);
 const storeHours = ref([]);
-const { formatTime } = useDateFormat();
 const { transformLocationData } = useLocationDetails();
 
-const getLocationStatus = (location) => {
+const getLocationStatus = () => {
   const now = new Date();
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
   const currentTime = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -346,30 +343,8 @@ const setAsMyStore = async () => {
   }
 };
 
-const showPreferencesAlert = async () => {
-  const alert = await alertController.create({
-    header: 'My Store',
-    message: 'To set a new preferred store location, please visit the preferences page.',
-    buttons: [
-      {
-        text: 'Cancel',
-        role: 'cancel'
-      },
-      {
-        text: 'Preferences',
-        handler: () => {
-          router.push('/tabs/preferences');
-        }
-      }
-    ]
-  });
-
-  await alert.present();
-};
-
 const hasWeeklyAd = computed(() => !!locationData.value?.weekly_ad_url);
 const hasRewards = computed(() => !!locationData.value?.rewards_url);
-const hasWeeklyAdOrRewards = computed(() => hasWeeklyAd.value || hasRewards.value);
 const hasSale = computed(() => !!locationData.value?.sale_url);
 
 // Replace individual modal refs with a single state object
@@ -380,11 +355,11 @@ const pdfModalState = ref({
   startDate: ''
 });
 
-// Replace individual open functions with a single function
+// Fix the openPdfModal function to use const for modalData
 const openPdfModal = (type) => {
   if (!locationData.value) return;
 
-  let modalData = {
+  const modalData = {
     isOpen: true,
     url: '',
     type: '',

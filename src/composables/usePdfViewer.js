@@ -6,25 +6,21 @@ const { Http } = Capacitor;
 const pdfjsLib = window.pdfjsLib
 
 const fetchPdfAsBlob = async (url) => {
-  try {
-    const response = await Http.get({
-      url,
-      responseType: 'blob'
-    });
+  const response = await Http.get({
+    url,
+    responseType: 'blob'
+  });
 
-    const byteCharacters = atob(response.data);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-    const blobUrl = URL.createObjectURL(blob);
-    return { blob, blobUrl };
-  } catch (error) {
-    throw error;
+  const byteCharacters = atob(response.data);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
   }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+  const blobUrl = URL.createObjectURL(blob);
+  return { blob, blobUrl };
 };
 
 const usePdfViewer = () => {

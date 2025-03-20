@@ -77,11 +77,12 @@ import { useRouter } from 'vue-router';
 import CouponCard from '@/components/CouponCard.vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonSegment, IonSegmentButton, 
          IonLabel, IonSpinner, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
 const router = useRouter();
 const { coupons, loading, fetchCoupons, availableCategories, fetchCategories, isMidax } = useCouponDetails();
-const { isAuthenticated, openSignupModal, SignupModal } = useSignupModal();
-const { clippedCoupons, isCouponClipped, addClippedCoupon, syncClippedCoupons, cleanupExpiredCoupons } = useClippedCoupons();
+const { SignupModal } = useSignupModal();
+const { isCouponClipped, syncClippedCoupons, cleanupExpiredCoupons } = useClippedCoupons();
 
 const offset = ref(0);
 const limit = ref(isMidax.value ? 20 : 1000);
@@ -182,6 +183,8 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('userSignedUp', () => fetchCoupons({ limit: limit.value, offset: 0 }));
 });
+
+defineComponent({ name: 'CouponsPage' });
 </script>
 
 <style scoped>

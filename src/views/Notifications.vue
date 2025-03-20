@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, defineComponent } from 'vue';
 import apiNotifications from '../axios/apiNotifications';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonLabel, IonIcon, IonSpinner, IonRefresher, IonRefresherContent, alertController, IonBadge } from '@ionic/vue';
 import { useNotificationDetails } from '@/composables/useNotificationDetails';
@@ -62,21 +62,17 @@ const loading = ref(true);
 const notifications = ref([]);
 const { transformNotificationData } = useNotificationDetails();
 
+defineComponent({ name: 'NotificationsPage' });
+
 // Fetch notifications logic
 const fetchNotifications = async (isRefreshing = false) => {
   if (!isRefreshing) loading.value = true;
 
   try {
     const response = await apiNotifications.getNotifications();
-    const readNotifications = JSON.parse(localStorage.getItem('readNotifications')) || [];
 
     const updatedNotifications = response.data.map(notification => {
-      const alreadyRead = readNotifications.includes(notification.id);
-      const existingNotification = notifications.value.find(n => n.id === notification.id);
-      return {
-        ...transformNotificationData(notification),
-        isRead: alreadyRead || existingNotification?.isRead || false
-      };
+      return transformNotificationData(notification);
     });
 
     if (isRefreshing) {
@@ -100,13 +96,6 @@ const doRefresh = async (event) => {
 
 // Alert presentation and handling
 const presentAlert = async (notification) => {
-  let readNotifications = JSON.parse(localStorage.getItem('readNotifications')) || [];
-
-  // if (!readNotifications.includes(notification.id)) {
-  //   readNotifications.push(notification.id);
-  //   localStorage.setItem('readNotifications', JSON.stringify(readNotifications));
-  // }
-
   const alert = await alertController.create({
     header: notification.notification_title,
     message: notification.notification_details,

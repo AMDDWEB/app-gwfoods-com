@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import apiRecipes from '../axios/apiRecipes';
 import { 
@@ -63,10 +63,7 @@ import {
   IonImg, 
   IonRefresher, 
   IonRefresherContent, 
-  IonSkeletonText,
-  IonCard,
-  IonTitle,
-  IonSpinner
+  IonSkeletonText
 } from '@ionic/vue';
 import { useRecipeDetails } from '../composables/useRecipeDetails';
 
@@ -122,6 +119,8 @@ const doRefresh = async (event) => {
   await fetchRecipes(true);
   event.target.complete();
 };
+
+defineComponent({ name: 'RecipesPage' });
 </script>
 
 <style scoped>

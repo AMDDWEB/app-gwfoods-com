@@ -2,10 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import TabsPage from '../views/TabsPage.vue';
 
-interface RouteParams {
-  id: string;
-}
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',

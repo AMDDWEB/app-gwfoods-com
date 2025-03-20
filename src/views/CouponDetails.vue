@@ -144,9 +144,25 @@ const fetchCouponDetails = async () => {
 };
 
 const handleClipClick = async () => {
-  if (!TokenStorage.hasTokens()) {
-    openSignupModal();
-    return;
+  // For Midax, check for card number
+  const hasMidaxCoupons = import.meta.env.VITE_HAS_MIDAX_COUPONS === "true";
+  
+  if (hasMidaxCoupons) {
+    // Check for card number
+    let cardNumber = localStorage.getItem('cardNumber');
+    const storeId = localStorage.getItem('storeId');
+    const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('access_token');
+    
+    if ((!cardNumber || !storeId) && !accessToken) {
+      openSignupModal();
+      return;
+    }
+  } else {
+    // For AppCard, check tokens
+    if (!TokenStorage.hasTokens()) {
+      openSignupModal();
+      return;
+    }
   }
 
   if (isClipping.value) return;

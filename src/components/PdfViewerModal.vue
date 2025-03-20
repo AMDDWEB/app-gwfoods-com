@@ -187,8 +187,8 @@ const PAN_SPEED = 0.5; // Adjust speed (lower = slower, higher = faster)
 
 const panMove = (event) => {
   if (isPanning && pdfContainer.value) {
-    let deltaX = (event.touches ? event.touches[0].clientX : event.clientX) - startX;
-    let deltaY = (event.touches ? event.touches[0].clientY : event.clientY) - startY;
+    const deltaX = (event.touches ? event.touches[0].clientX : event.clientX) - startX;
+    const deltaY = (event.touches ? event.touches[0].clientY : event.clientY) - startY;
 
     // Apply PAN_SPEED multiplier
     currentX += deltaX * PAN_SPEED;

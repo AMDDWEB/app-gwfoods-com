@@ -89,6 +89,7 @@ import { useRouter } from 'vue-router';
 import { isPlatform } from '@ionic/vue';
 import { callbackUri } from '@/main';
 import { useAuth0 } from '@auth0/auth0-vue';
+import { TokenStorage } from '@/utils/tokenStorage';
 
 // Importing method to fetch loyalty number from a composable
 const { getLoyaltyNumber } = useSignupModal();
@@ -197,25 +198,16 @@ const onBarcodeRender = () => {
 // Function to handle Auth0 logout
 const handleAuth0Logout = async () => {
     try {
-        // Clear specific auth-related localStorage items
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('cardNumber');
-        localStorage.removeItem('firstName');
-        localStorage.removeItem('clippedCoupons');
-        
-        // Auth0 specific logout using the callbackUri
-        await logout({
-            logoutParams: {
-                returnTo: callbackUri
-            },
-            openUrl: url =>
-                Browser.open({
-                    url,
-                    windowName: '_self'
-                })
-        });
+        // Use the signOut method from useAuthModule which now handles token clearing and Auth0 logout
+        await signOut();
     } catch (error) {
         console.error('Logout error:', error);
+        
+        // Even if the Auth0 logout fails, ensure tokens are cleared
+        TokenStorage.clearTokens();
+        
+        // Force navigate to home as a fallback
+        router.replace('/');
     }
 };
 

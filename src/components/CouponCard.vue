@@ -143,16 +143,17 @@ const handleClipClick = async (event) => {
   try {
     if (hasMidaxCoupons.value) {
       // For Midax, check card number directly
-      const cardNumber = localStorage.getItem('cardNumber');
+      let cardNumber = localStorage.getItem('cardNumber');
       const storeId = localStorage.getItem('storeId');
+      const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('access_token');
       
-      if (!cardNumber || !storeId) {
-        // Only redirect to sign in if we don't have card number
+      if ((!cardNumber || !storeId) && !accessToken) {
+        // Only redirect to sign in if we don't have card number and no access token
         await signIn();
         return;
       }
 
-      // We have card number, proceed with clipping
+      // We have card number or access token, proceed with clipping
       const response = await CouponsApi.clipCoupon(props.coupon.id);
       if (response) {
         addClippedCoupon(props.coupon.id);
@@ -226,7 +227,6 @@ ion-card {
   text-align: center;
   overflow: hidden;
   min-height: 42px;
-  max-height: 42px;
 }
 
 .coupon-expiration {

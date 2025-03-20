@@ -213,9 +213,9 @@ export function useSignupModal() {
         };
 
         loyaltyNumber.value = phoneNumber.value;
-        cardNumber.value = customerInfo.CardNumber;
+        cardNumber.value = customerInfo.cardNumber;
         localStorage.setItem('loyaltyNumber', phoneNumber.value);
-        localStorage.setItem('cardNumber', customerInfo.CardNumber);
+        localStorage.setItem('cardNumber', customerInfo.cardNumber);
 
         isAuthenticated.value = true;
         currentStep.value = 3;
@@ -224,7 +224,7 @@ export function useSignupModal() {
         window.dispatchEvent(new CustomEvent('userSignedUp', {
           detail: {
             loyaltyNumber: phoneNumber.value,
-            cardNumber: customerInfo.CardNumber
+            cardNumber: customerInfo.cardNumber
           }
         }));
       } else {

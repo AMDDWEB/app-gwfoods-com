@@ -68,7 +68,7 @@ export function useCouponDetails() {
 
       // Only include categories that have coupons
       const uniqueCategories = Object.entries(categoryCounts)
-        .filter(([_, count]) => count > 0)
+        .filter(([, count]) => count > 0)
         .map(([category]) => category)
         .sort();
 
