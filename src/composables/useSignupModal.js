@@ -9,7 +9,13 @@ import {
   IonInput,
   IonButton,
   IonIcon,
-  IonSpinner
+  IonSpinner,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonTitle,
+  IonSegment,
+  IonSegmentButton
 } from '@ionic/vue';
 import { closeOutline, alertCircleOutline } from 'ionicons/icons';
 import { defineComponent } from 'vue';
@@ -381,18 +387,6 @@ export function useSignupModal() {
             router.push('/tabs/preferences');
           }
         }, 'Manage Preferences')
-      ]),
-
-      h('p', { class: 'preferences-note' }, [
-        'Want to update your preferences or unsubscribe? ',
-        h('a', {
-          href: '#',
-          onClick: (e) => {
-            e.preventDefault();
-            closeSignupModal();
-            router.push('/tabs/preferences');
-          }
-        }, 'Visit your account settings')
       ])
     ]);
   };
@@ -402,9 +396,29 @@ export function useSignupModal() {
       return () => h(IonModal, {
         isOpen: showModal.value,
         onDidDismiss: closeSignupModal,
-        class: 'auth-modal'
+        class: 'auth-modal',
+        breakpoints: [1],
+        swipeToClose: false,
+        backdropDismiss: false
       }, [
-        h(IonContent, { class: 'ion-padding modal-content-wrapper' }, [
+        h(IonHeader, [
+          h(IonToolbar, [
+            h(IonButtons, { slot: 'end' }, [
+              h(IonButton, {
+                onClick: () => {
+                  showModal.value = false;
+                  closeSignupModal();
+                }
+              }, 'Close')
+            ]),
+            h(IonTitle, 'Sign Up or Sign In')
+          ])
+        ]),
+        h(IonContent, { 
+          class: 'ion-padding modal-content-wrapper',
+          keyboardClose: true,
+          scrollY: true
+        }, [
           h('div', { class: 'modal-content' }, [
             h('div', { class: 'progress-steps' }, [
               h('div', {
@@ -423,12 +437,6 @@ export function useSignupModal() {
                 class: `step ${currentStep.value === 4 ? 'active' : ''}`,
               }, '4')
             ]),
-
-            currentStep.value < 4 && h(IonButton, {
-              fill: 'clear',
-              class: 'close-button',
-              onClick: closeSignupModal
-            }, () => h(IonIcon, { icon: closeOutline })),
 
             h('div', { class: 'header-section' }, [
               h('div', { class: 'emoji-wrapper' },
@@ -450,7 +458,10 @@ export function useSignupModal() {
                   onIonInput: handlePhoneInput,
                   placeholder: '(555) 555-5555',
                   disabled: isLoading.value,
-                  class: 'phone-input'
+                  class: 'phone-input',
+                  enterkeyhint: 'next',
+                  inputmode: 'tel',
+                  clearInput: true
                 })
               ]),
               h(IonButton, {
@@ -471,7 +482,10 @@ export function useSignupModal() {
                   placeholder: 'Enter 4-digit code',
                   disabled: isLoading.value,
                   maxlength: 4,
-                  class: 'verification-input'
+                  class: 'verification-input',
+                  enterkeyhint: 'done',
+                  inputmode: 'numeric',
+                  clearInput: true
                 })
               ]),
               h(IonButton, {
@@ -489,15 +503,6 @@ export function useSignupModal() {
             errorMessage.value && h('div', { class: 'error-container' }, [
               h(IonIcon, { icon: alertCircleOutline, color: 'danger' }),
               h('p', errorMessage.value)
-            ]),
-
-            h('div', { class: 'footer-section' }, [
-              h('p', { class: 'terms-text' }, [
-                'By continuing, you agree to our ',
-                h('a', { href: '#' }, 'Terms'),
-                ' and ',
-                h('a', { href: '#' }, 'Privacy Policy')
-              ])
             ])
           ])
         ])
@@ -514,16 +519,24 @@ export function useSignupModal() {
 
     .modal-content-wrapper {
       background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      touch-action: auto;
+      position: relative;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .modal-content {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      min-height: 100%;
       padding: 24px;
       max-width: 400px;
       margin: 0 auto;
       position: relative;
+      padding-bottom: 100px;
     }
 
     .progress-steps {
@@ -565,13 +578,23 @@ export function useSignupModal() {
     }
 
     .close-button {
-      position: absolute;
+      position: fixed;
       top: 16px;
       right: 16px;
-      z-index: 1;
+      z-index: 999;
       --padding-start: 8px;
       --padding-end: 8px;
       --color: var(--ion-color-medium);
+      --background: rgba(255, 255, 255, 0.9);
+      --border-radius: 50%;
+      --width: 40px;
+      --height: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .close-button:hover {
+      --background: rgba(255, 255, 255, 1);
+      --color: var(--ion-color-dark);
     }
 
     .header-section {
@@ -604,6 +627,8 @@ export function useSignupModal() {
     .form-section {
       margin-bottom: 20px;
       padding-top: 0px;
+      overflow-y: visible;
+      flex: 1;
     }
 
     .custom-input {
@@ -627,7 +652,7 @@ export function useSignupModal() {
 
     .submit-button {
       margin-top: 16px;
-      margin-bottom: 50px;
+      margin-bottom: 20px;
       height: 52px;
       font-size: 16px;
       font-weight: 600;
@@ -652,25 +677,6 @@ export function useSignupModal() {
       margin-top: 16px;
       animation: shake 0.4s ease-in-out;
     }
-
-    .footer-section {
-      margin-top: auto;
-      text-align: center;
-      padding-bottom: 24px;
-      display: none !important;
-    }
-
-    .terms-text {
-      font-size: 13px;
-      color: var(--ion-color-medium);
-      line-height: 1.4;
-    }
-
-    .terms-text a {
-      color: var(--ion-color-primary);
-      text-decoration: none;
-    }
-
 
     .step.completed {
       background: var(--ion-color-success);
@@ -708,13 +714,26 @@ export function useSignupModal() {
     }
 
     .preferences-note {
-      display: none !important;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--ion-color-medium);
     }
 
     .preferences-note a {
       color: var(--ion-color-primary);
       text-decoration: none;
       font-weight: 500;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
   `;
   document.head.appendChild(style);
