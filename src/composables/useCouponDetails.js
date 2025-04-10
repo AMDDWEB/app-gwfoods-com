@@ -30,8 +30,11 @@ export function useCouponDetails() {
         // Reset coupons if this is the first batch
         coupons.value = response.items || [];
       } else if (isMidax.value) {
-        // Append new coupons only for Midax
-        coupons.value = [...coupons.value, ...(response.items || [])];
+        // Append new coupons only for Midax, ensuring no duplicates
+        const newCoupons = response.items || [];
+        const existingIds = new Set(coupons.value.map(coupon => coupon.id));
+        const uniqueNewCoupons = newCoupons.filter(coupon => !existingIds.has(coupon.id));
+        coupons.value = [...coupons.value, ...uniqueNewCoupons];
       }
 
       return response;

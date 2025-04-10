@@ -41,7 +41,7 @@ class CouponsApi {
     if (hasMidaxCoupons) {
       // For Midax system - always use batch loading with fixed limit
       params.location_id = localStorage.getItem('storeId');
-      params.limit = '20'; // Fixed limit for Midax
+      params.limit = '25'; // Fixed limit for Midax
       params.offset = offset.toString();
       
       // Only add card number if authenticated
