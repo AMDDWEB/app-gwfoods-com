@@ -106,7 +106,7 @@
         <!-- Confirmation toast for added items -->
         <IonToast
           :is-open="showAddToast"
-          :message="`Added '${addedText}' to your grocery!`"
+          :message="`Added '${addedText}' to your grocery list!`"
           duration="1500"
           position="bottom"
           class="success-toast"
@@ -182,7 +182,8 @@ const { addClippedCoupon } = useClippedCoupons();
       coupon.description?.toLowerCase().includes(query) ||
       coupon.category?.toLowerCase().includes(query) ||
       coupon.disclaimer?.toLowerCase().includes(query) ||
-      coupon.to_date?.toLowerCase().includes(query)
+      coupon.to_date?.toLowerCase().includes(query) ||
+      coupon.subtitle?.toLowerCase().includes(query)
     );
   });
   
