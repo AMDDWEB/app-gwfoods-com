@@ -154,7 +154,7 @@ onMounted(async () => {
 });
 
 // Define minimum length for suggestions
-const minSuggestionLength = 3; // only start suggesting after 3 characters
+const minSuggestionLength = 4; // only start suggesting after 3 characters
 
 // Compute filtered coupon suggestions based on input
 const suggestions = computed(() => {
@@ -239,10 +239,6 @@ function removeViaCheckbox(item) {
 .app-search-container .app-custom-search-icon {
     margin-right: 8px;
     flex-shrink: 0;
-}
-
-.app-search-input {
-    flex: 1;
 }
 
 ion-checkbox::part(container) {
