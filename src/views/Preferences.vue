@@ -4,8 +4,13 @@
       <ion-toolbar>
         <ion-buttons slot="end">
 
-          <ion-button @click="presentBarcodeModal" v-if="hasAppCardCoupons && loyaltyNumber">
+          <ion-button @click="presentBarcodeModal" v-if="hasAppCardCoupons && loyaltyNumber" class="ion-padding-end">
             <ion-icon color="primary" name="my-barcode-regular" size="medium"></ion-icon>
+          </ion-button>
+
+          <ion-button @click="$router.push('/grocery-list')"
+            class="ion-padding-end-small">
+            <ion-icon color="primary" name="edit-grocery-list-regular" size="medium"></ion-icon>
           </ion-button>
         </ion-buttons>
 
