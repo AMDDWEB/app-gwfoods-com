@@ -18,7 +18,7 @@
       <span class="barcode-details">Please present this card to the cashier to redeem your coupons.</span>
       <vue-barcode class="barcode-container" :value="cardNumber" :options="{
                         format: 'CODE128',
-                        width: 2.5,
+                        width: 2.25,
                         height: 50,
                         displayValue: false,
                         background: '#f7f7f7',

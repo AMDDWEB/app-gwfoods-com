@@ -1,128 +1,100 @@
 <template>
     <ion-page>
-      <ion-header>
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-button @click="$router.go(-1)">
-              <ion-icon
-                slot="icon-only"
-                color="primary"
-                name="back-button"
-                class="toolbar-icon"
-              ></ion-icon>
-            </ion-button>
-          </ion-buttons>
-          <ion-title>My Grocery List</ion-title>
-          <ion-buttons slot="end">
-            <ion-button @click="showSortAlert = true">
-              <ion-icon
-                slot="icon-only"
-                color="primary"
-                name="sort-grocery-list-regular"
-                class="toolbar-icon"
-              ></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-  
-        <ion-toolbar>
-          <div class="app-search-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 640 512"
-              class="app-custom-search-icon"
-            >
-              <path d="M0 416c0 22.9 12.2 44 32 55.4s44.2 11.4 64 0s32-32.6 32-55.4s-12.2-44-32-55.4s-44.2-11.4-64 0S0 393.1 0 416zM8.6 64c-11.4 19.8-11.4 44.2 0 64S41.1 160 64 160s44-12.2 55.4-32s11.4-44.2 0-64S86.9 32 64 32S20 44.2 8.6 64zm0 160c-11.4 19.8-11.4 44.2 0 64S41.1 320 64 320s44-12.2 55.4-32s11.4-44.2 0-64S86.9 192 64 192s-44 12.2-55.4 32zM40 256c0-13.3 10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24s-24-10.7-24-24zm0 160c0-13.3 10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24s-24-10.7-24-24zM160 96c0 13.3 10.7 24 24 24l304 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L184 72c-13.3 0-24 10.7-24 24zm0 160c0 13.3 10.7 24 24 24l159.5 0c10.6-18.4 24.5-34.6 40.7-48L184 232c-13.3 0-24 10.7-24 24zm0 160c0 13.3 10.7 24 24 24l151.4 0c-6.7-15-11.4-31.1-13.8-48L184 392c-13.3 0-24 10.7-24 24zm192-48c0 79.5 64.5 144 144 144s144-64.5 144-144s-64.5-144-144-144s-144 64.5-144 144zm64 0c0-8.8 7.2-16 16-16l48 0 0-48c0-8.8 7.2-16 16-16s16 7.2 16 16l0 48 48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-48 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-48-48 0c-8.8 0-16-7.2-16-16z"/>
-            </svg>
-            <IonInput
-              v-model="newItem"
-              placeholder="Add to my list..."
-              @focus="openSuggestionsModal"
-              @ionInput="openSuggestionsModal"
-              @keydown.enter="addItem"
-              class="app-search-input"
-            />
-          </div>
-          <IonList v-if="suggestions.length" lines="full" class="suggestion-list">
-            <IonItem
-              button
-              detail="false"
-              lines="full"
-              v-for="coupon in suggestions"
-              :key="coupon.id"
-              @click="addSuggestion(coupon)"
-            >
-              <IonLabel>
-                <h3>{{ coupon.subtitle }}</h3>
-                <p class="suggestion-description">{{ coupon.description }}</p>
-              </IonLabel>
-            </IonItem>
-          </IonList>
-        </ion-toolbar>
-      </ion-header>
-  
-      <ion-content>
-  
-        <transition-group name="list" tag="IonList">
-          <IonItemSliding v-for="item in items" :key="item.id">
-            <IonItem :class="{ 'fade-out': item.removing }" lines="full">
-              <IonCheckbox
-                slot="start"
-                @ionChange="removeViaCheckbox(item)"
-                color="primary"
-              />
-              <IonLabel>
-                <h3 class="grocery-item">{{ item.text }}</h3>
-                <p class="helper-text" v-if="item.helperText">{{ item.helperText }}</p>
-              </IonLabel>
-            </IonItem>
-            <IonItemOptions side="end">
-              <IonItemOption color="danger" @click="removeItem(item)">
-                <IonIcon slot="icon-only" name="trash-can-regular" color="light" />
-              </IonItemOption>
-            </IonItemOptions>
-          </IonItemSliding>
-        </transition-group>
-  
-        <IonAlert
-          :is-open="showSortAlert"
-          header="Sort Grocery List?"
-          message="This action cannot be undone. Do you want to sort items alphabetically?"
-          :buttons="[
-            { text: 'Cancel', role: 'cancel', handler: () => showSortAlert = false },
-            { text: 'Sort', handler: () => { sortItems(); showSortAlert = false; } }
-          ]"
-        />
-  
-        <IonToast
-          :is-open="showEmptyToast"
-          message="Your list is empty. Please add grocery items."
-          duration="6000"
-          position="bottom"
-          class="custom-toast"
-          @did-dismiss="showEmptyToast = false"
-        />
-  
-        <!-- Confirmation toast for added items -->
-        <IonToast
-          :is-open="showAddToast"
-          :message="`Added '${addedText}' to your grocery list!`"
-          duration="1500"
-          position="bottom"
-          class="success-toast"
-          @did-dismiss="showAddToast = false"
-        />
-      </ion-content>
+    <!-- Page header: back button, title, and sort control -->
+        <ion-header>
+            <ion-toolbar>
+                <ion-buttons slot="start">
+                    <ion-button @click="$router.go(-1)">
+                        <ion-icon slot="icon-only" color="primary" name="back-button" class="toolbar-icon"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+                <ion-title>My Grocery List</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button @click="showSortAlert = true">
+                        <ion-icon slot="icon-only" color="primary" name="sort-grocery-list-regular"
+                            class="toolbar-icon"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+
+            <!-- Search bar and coupon suggestions dropdown -->
+            <ion-toolbar>
+                <div class="app-search-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="app-custom-search-icon">
+                        <path
+                            d="M0 416c0 22.9 12.2 44 32 55.4s44.2 11.4 64 0s32-32.6 32-55.4s-12.2-44-32-55.4s-44.2-11.4-64 0S0 393.1 0 416zM8.6 64c-11.4 19.8-11.4 44.2 0 64S41.1 160 64 160s44-12.2 55.4-32s11.4-44.2 0-64S86.9 32 64 32S20 44.2 8.6 64zm0 160c-11.4 19.8-11.4 44.2 0 64S41.1 320 64 320s44-12.2 55.4-32s11.4-44.2 0-64S86.9 192 64 192s-44 12.2-55.4 32zM40 256c0-13.3 10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24s-24-10.7-24-24zm0 160c0-13.3 10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24s-24-10.7-24-24zM160 96c0 13.3 10.7 24 24 24l304 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L184 72c-13.3 0-24 10.7-24 24zm0 160c0 13.3 10.7 24 24 24l159.5 0c10.6-18.4 24.5-34.6 40.7-48L184 232c-13.3 0-24 10.7-24 24zm0 160c0 13.3 10.7 24 24 24l151.4 0c-6.7-15-11.4-31.1-13.8-48L184 392c-13.3 0-24 10.7-24 24zm192-48c0 79.5 64.5 144 144 144s144-64.5 144-144s-64.5-144-144-144s-144 64.5-144 144zm64 0c0-8.8 7.2-16 16-16l48 0 0-48c0-8.8 7.2-16 16-16s16 7.2 16 16l0 48 48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-48 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-48-48 0c-8.8 0-16-7.2-16-16z" />
+                    </svg>
+                    <IonInput v-model="newItem" placeholder="Add to my list..." @focus="openSuggestionsModal"
+                        @ionInput="openSuggestionsModal" @keydown.enter="addItem" class="app-search-input" />
+                </div>
+                <IonList v-if="suggestions.length" lines="full" class="suggestion-list">
+                    <IonItem button detail="false" lines="full" v-for="coupon in suggestions" :key="coupon.id"
+                        @click="addSuggestion(coupon)">
+                        <IonLabel>
+                            <h3>{{ coupon.subtitle }}</h3>
+                            <p class="suggestion-description">{{ coupon.description }}</p>
+                        </IonLabel>
+                        <IonBadge class="coupon-savings-badge" color="success">
+                          {{ coupon.title }}
+                        </IonBadge>
+                    </IonItem>
+                </IonList>
+            </ion-toolbar>
+        </ion-header>
+
+        <ion-content>
+
+            <!-- Grocery list: items with checkbox fade and swipe-to-delete -->
+            <transition-group name="list" tag="IonList">
+                <IonItemSliding v-for="item in items" :key="item.id">
+                    <IonItem :class="{ 'fade-out': item.removing }" lines="full">
+                        <IonCheckbox slot="start" @ionChange="removeViaCheckbox(item)" color="primary" />
+                        <IonLabel>
+                            <h3 class="grocery-item">{{ item.text }}</h3>
+                            <p class="helper-text" v-if="item.helperText">{{ item.helperText }}</p>
+                        </IonLabel>
+                        <IonBadge
+                          v-if="item.badgeText"
+                          class="coupon-savings-badge"
+                          color="success"
+                        >
+                          {{ item.badgeText }}
+                        </IonBadge>
+                    </IonItem>
+                    <IonItemOptions side="end">
+                        <IonItemOption color="danger" @click="removeItem(item)">
+                            <IonIcon slot="icon-only" name="trash-can-regular" color="light" />
+                        </IonItemOption>
+                    </IonItemOptions>
+                </IonItemSliding>
+            </transition-group>
+
+            <!-- Sort confirmation alert -->
+            <IonAlert :is-open="showSortAlert" header="Sort Grocery List?"
+                message="This action cannot be undone. Do you want to sort items alphabetically?" :buttons="[
+                    { text: 'Cancel', role: 'cancel', handler: () => showSortAlert = false },
+                    { text: 'Sort', handler: () => { sortItems(); showSortAlert = false; } }
+                ]" />
+
+            <!-- Toast for empty list notification -->
+            <IonToast :is-open="showEmptyToast" message="Your list is empty. Please add grocery items." duration="6000"
+                position="bottom" class="custom-toast" @did-dismiss="showEmptyToast = false" />
+
+            <!-- Toast confirming item added -->
+            <IonToast :is-open="showAddToast" :message="`Added '${addedText}' to your grocery list!`" duration="1500"
+                position="bottom" class="success-toast" @did-dismiss="showAddToast = false" />
+        </ion-content>
     </ion-page>
-  </template>
-  
+</template>
+
 <script setup>
+// Import Vue refs, Ionic components, and coupon APIs/utilities
 import CouponsApi from '@/axios/apiCoupons';
 import { TokenStorage } from '@/utils/tokenStorage';
 import { useClippedCoupons } from '@/composables/useClippedCoupons.js';
 const { addClippedCoupon } = useClippedCoupons();
-  import { ref, watch, onMounted, computed } from 'vue';
-  import {
+import { ref, watch, onMounted, computed } from 'vue';
+import {
     IonPage,
     IonHeader,
     IonToolbar,
@@ -141,184 +113,221 @@ const { addClippedCoupon } = useClippedCoupons();
     IonItemOptions,
     IonItemOption,
     IonToast,
+    IonBadge,
     IonNote
-  } from '@ionic/vue';
-  import { useCouponDetails } from '@/composables/useCouponDetails.js';
-  
-  const newItem = ref('');
-  const items = ref([]);
-  const showSortAlert = ref(false);
-  const showEmptyToast = ref(false);
-  const showAddToast = ref(false);
-  const addedText = ref('');
-  const showSuggestionsModal = ref(false);
+} from '@ionic/vue';
+import { useCouponDetails } from '@/composables/useCouponDetails.js';
 
-  function openSuggestionsModal() {
+// Reactive input for new grocery item text
+const newItem = ref('');
+// Reactive array of grocery list items
+const items = ref([]);
+// Controls visibility of the sort confirmation alert
+const showSortAlert = ref(false);
+// Controls toast when list is empty on load
+const showEmptyToast = ref(false);
+// Controls and text for add-item confirmation toast
+const showAddToast = ref(false);
+const addedText = ref('');
+const showSuggestionsModal = ref(false);
+
+function openSuggestionsModal() {
     showSuggestionsModal.value = true;
-  }
-  function closeSuggestionsModal() {
+}
+function closeSuggestionsModal() {
     showSuggestionsModal.value = false;
-  }
-  
-  const { coupons, fetchCoupons } = useCouponDetails();
-  
-  // Load coupons on mount
-  onMounted(async () => {
+}
+
+// Coupons fetched for matching suggestions
+const { coupons, fetchCoupons } = useCouponDetails();
+
+// Initialize list from localStorage and fetch coupons
+onMounted(async () => {
     const stored = localStorage.getItem('grocery-items');
     if (stored) {
-      items.value = JSON.parse(stored).map(i => ({ ...i, removing: false }));
+        items.value = JSON.parse(stored).map(i => ({ ...i, removing: false }));
     }
     await fetchCoupons();
     if (!items.value.length) {
-      showEmptyToast.value = true;
+        showEmptyToast.value = true;
     }
-  });
-  
-  const suggestions = computed(() => {
+});
+
+// Define minimum length for suggestions
+const minSuggestionLength = 3; // only start suggesting after 3 characters
+
+// Compute filtered coupon suggestions based on input
+const suggestions = computed(() => {
     const query = newItem.value.trim().toLowerCase();
-    if (!query) return [];
+    if (query.length < minSuggestionLength) return [];
     return coupons.value.filter(coupon =>
-      coupon.title?.toLowerCase().includes(query) ||
-      coupon.description?.toLowerCase().includes(query) ||
-      coupon.category?.toLowerCase().includes(query) ||
-      coupon.disclaimer?.toLowerCase().includes(query) ||
-      coupon.to_date?.toLowerCase().includes(query) ||
-      coupon.subtitle?.toLowerCase().includes(query)
+        coupon.title?.toLowerCase().includes(query) ||
+        coupon.description?.toLowerCase().includes(query) ||
+        coupon.category?.toLowerCase().includes(query) ||
+        coupon.disclaimer?.toLowerCase().includes(query) ||
+        coupon.to_date?.toLowerCase().includes(query) ||
+        coupon.subtitle?.toLowerCase().includes(query)
     );
-  });
-  
+});
+
+// Add a coupon suggestion to list: clip via API, update local clipped set, and show toast
 async function addSuggestion(coupon) {
     if (TokenStorage.hasTokens()) {
-      try {
-        await CouponsApi.clipCoupon(coupon.id);
-        addClippedCoupon(coupon.id);
-      } catch (e) {
-        console.error('Error clipping coupon:', e);
-      }
+        try {
+            await CouponsApi.clipCoupon(coupon.id);
+            addClippedCoupon(coupon.id);
+        } catch (e) {
+            console.error('Error clipping coupon:', e);
+        }
     }
     items.value.push({
-      text: coupon.subtitle,
-      helperText: coupon.description,
-      id: Date.now(),
-      removing: false
+        text: coupon.subtitle,
+        helperText: coupon.description,
+        badgeText: coupon.title,
+        id: Date.now(),
+        removing: false
     });
     newItem.value = '';
     addedText.value = coupon.title;
     showAddToast.value = true;
 }
-  
-  function sortItems() {
+
+// Sort current list alphabetically
+function sortItems() {
     items.value.sort((a, b) => a.text.localeCompare(b.text));
-  }
-  
-  watch(items, (val) => {
+}
+
+watch(items, (val) => {
     localStorage.setItem('grocery-items', JSON.stringify(val));
-  }, { deep: true });
-  
-  function addItem() {
+}, { deep: true });
+
+// Add custom list item when no suggestion used
+function addItem() {
     const text = newItem.value && newItem.value.trim();
     if (!text) return;
     items.value.push({ text, id: Date.now(), removing: false });
     newItem.value = '';
     addedText.value = text;
     showAddToast.value = true;
-  }
-  
-  function removeItem(item) {
+}
+
+// Immediately remove item from list
+function removeItem(item) {
     const index = items.value.findIndex(i => i.id === item.id);
     if (index > -1) {
-      items.value.splice(index, 1);
+        items.value.splice(index, 1);
     }
-  }
-  
-  function removeViaCheckbox(item) {
+}
+
+// Fade out and remove when checkbox toggled
+function removeViaCheckbox(item) {
     item.removing = true;
     setTimeout(() => {
-      const index = items.value.findIndex(i => i.id === item.id);
-      if (index > -1) items.value.splice(index, 1);
+        const index = items.value.findIndex(i => i.id === item.id);
+        if (index > -1) items.value.splice(index, 1);
     }, 1000);
-  }
-  </script>
-  
-  <style scoped>
-  .app-search-container {
+}
+</script>
+
+<style scoped>
+/* Layout for search bar alignment */
+.app-search-container {
     display: flex;
     align-items: center;
-  }
-  
-  .app-search-container .app-custom-search-icon {
+}
+
+.app-search-container .app-custom-search-icon {
     margin-right: 8px;
     flex-shrink: 0;
-  }
-  
-  .app-search-input {
+}
+
+.app-search-input {
     flex: 1;
-  }
-  
-  ion-checkbox::part(container) {
+}
+
+ion-checkbox::part(container) {
     border-radius: 500px;
     border: 2px solid;
     border-color: var(--ion-color-primary);
-  }
-  
-  .toolbar-icon {
+}
+
+.toolbar-icon {
     font-size: 20px !important;
-  }
-  
-  .list-leave-active {
+}
+
+/* Transition styles for list removal animation */
+.list-leave-active {
     transition: all 0.5s ease;
-  }
-  .list-leave-to {
+}
+
+.list-leave-to {
     opacity: 0;
     height: 0;
     margin: 0;
     padding: 0;
-  }
-  
-  .grocery-item {
+}
+
+.grocery-item {
     text-transform: capitalize;
-  }
-  
-  ion-toast.custom-toast {
+}
+
+ion-toast.custom-toast {
     --background: var(--ion-color-danger);
     --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
     --color: var(--ion-color-light);
-  }
+}
 
-  ion-toast.success-toast {
+ion-toast.success-toast {
     --background: var(--ion-color-success);
     --box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.2);
     --color: var(--ion-color-light);
-  }
-  
-  .suggestion-list {
+}
+
+.suggestion-list {
     width: 100%;
     margin-top: 4px;
     --background: var(--ion-color-light);
-  }
-  
-  .fade-out {
+}
+
+.fade-out {
     opacity: 0;
     transition: opacity 1s ease;
-  }
-  
-  .suggestion-description,
-  .helper-text {
+}
+
+/* Truncate long descriptions/helper text */
+.suggestion-description,
+.helper-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
-  }
-  
-  /* Optional: adjust h3/p font sizes */
-  .suggestion-list h3,
-  .grocery-item {
+}
+
+/* Optional: adjust h3/p font sizes */
+.suggestion-list h3,
+.grocery-item {
     font-size: 16px;
     margin: 0;
-  }
-  .suggestion-description,
-  .helper-text {
+}
+
+.suggestion-description,
+.helper-text {
     font-size: 14px;
     text-transform: uppercase;
-  }
-  </style>
+}
+
+ion-item {
+  position: relative;
+}
+.coupon-savings-badge {
+  font-size: 12px;
+  color: var(--ion-color-light);
+  position: absolute;
+  right: 15px;
+  top: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+</style>

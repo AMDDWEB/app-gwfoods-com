@@ -12,7 +12,7 @@
         </ion-buttons>
         <ion-buttons slot="end">
 
-          <ion-button @click="presentBarcodeModal" v-if="hasAppCardCoupons && loyaltyNumber">
+          <ion-button @click="presentBarcodeModal" v-if="hasAppCardCoupons && loyaltyNumber" class="ion-padding-end">
             <ion-icon color="primary" name="my-barcode-regular" size="medium"></ion-icon>
           </ion-button>
 
