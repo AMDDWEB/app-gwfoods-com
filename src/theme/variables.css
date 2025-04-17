@@ -111,7 +111,7 @@ http://ionicframework.com/docs/theming/ */
     /* justify-content: center;
     align-items: center;
 	/* Center the image horizontally */
-	display: flex; */
+	display: flex;
 	/* Make it a block-level element */
 	padding-bottom: 5px;
 }
@@ -150,7 +150,7 @@ http://ionicframework.com/docs/theming/ */
 
 .app-search-container {
 	display: block;
-	width: 95%;
+	width: 96.5%;
 	background-color: #fff;
 	margin-left: auto;
 	margin-right: auto;

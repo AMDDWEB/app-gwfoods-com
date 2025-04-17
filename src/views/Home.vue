@@ -15,6 +15,11 @@
           <ion-button @click="presentBarcodeModal" v-if="hasAppCardCoupons && loyaltyNumber">
             <ion-icon color="primary" name="my-barcode-regular" size="medium"></ion-icon>
           </ion-button>
+
+          <ion-button @click="$router.push('/grocery-list')"
+            class="ion-padding-end-small">
+            <ion-icon color="primary" name="edit-grocery-list-regular" size="medium"></ion-icon>
+          </ion-button>
         </ion-buttons>
 
         <ion-title><ion-img class="app-toolbar-image" :src="logoUrl"></ion-img></ion-title>

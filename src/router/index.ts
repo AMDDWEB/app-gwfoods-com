@@ -90,6 +90,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/my-account',
     name: 'My Account',
     component: () => import('@/views/MyAccount.vue'),
+  },
+  {
+    path: '/grocery-list',
+    name: 'Grocery List',
+    component: () => import('@/views/GroceryList.vue'),
   }
 ];
 

@@ -3,12 +3,12 @@
     <ion-header>
       <!-- All/Clipped Toggle First -->
       <ion-toolbar>
-        <ion-segment class="coupon-toggle" v-model="selectedView" style="width: 90%;">
+        <ion-segment class="coupon-toggle" v-model="selectedView" style="width: 96.5%;">
           <ion-segment-button value="all">
             <ion-label>All Coupons</ion-label>
           </ion-segment-button>
           <ion-segment-button value="clipped">
-            <ion-label>Clipped</ion-label>
+            <ion-label>Clipped Coupons</ion-label>
           </ion-segment-button>
         </ion-segment>
       </ion-toolbar>
@@ -35,8 +35,8 @@
       <!-- Search Bar Third -->
       <ion-toolbar>
         <div class="app-search-container">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="app-custom-search-icon">
-            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM288 176c0-44.2-35.8-80-80-80s-80 35.8-80 80c0 48.8 46.5 111.6 68.6 138.6c6 7.3 16.8 7.3 22.7 0c22.1-27 68.6-89.8 68.6-138.6zm-112 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="app-custom-search-icon">
+            <path d="M0 56l0 80c0 13.3 10.7 24 24 24s24-10.7 24-24l0-80c0-4.4 3.6-8 8-8l80 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L56 0C25.1 0 0 25.1 0 56zM0 376l0 80c0 30.9 25.1 56 56 56l80 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-80 0c-4.4 0-8-3.6-8-8l0-80c0-13.3-10.7-24-24-24s-24 10.7-24 24zM128 152l0 208c0 13.3 10.7 24 24 24l16 0c13.3 0 24-10.7 24-24l0-208c0-13.3-10.7-24-24-24l-16 0c-13.3 0-24 10.7-24 24zm96-8l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16s-16 7.2-16 16zm64 8l0 168c0-52.4 25.1-98.8 64-128l0-40c0-13.3-10.7-24-24-24l-16 0c-13.3 0-24 10.7-24 24zm0 168l0 40c0 8.9 4.8 16.6 11.9 20.8C292.2 362 288 341.5 288 320zm32 0c0 70.7 57.3 128 128 128c26.7 0 51.4-8.2 71.9-22.1l.1-.1 79.1 79.1c9.3 9.4 24.5 9.3 33.9 0s9.4-24.5 0-33.9l-79.1-79.1C567.8 371.4 576 346.7 576 320c0-70.7-57.3-128-128-128s-128 57.3-128 128zm48 0c0-28.6 15.2-55 40-69.3s55.2-14.3 80 0s40 40.7 40 69.3s-15.2 55-40 69.3s-55.2 14.3-80 0s-40-40.7-40-69.3zm16-168l0 21.3c19.6-8.6 41.2-13.3 64-13.3l0-8c0-13.3-10.7-24-24-24l-16 0c-13.3 0-24 10.7-24 24zM416 24c0 13.3 10.7 24 24 24l80 0c4.4 0 8 3.6 8 8l0 80c0 13.3 10.7 24 24 24s24-10.7 24-24l0-80c0-30.9-25.1-56-56-56L440 0c-13.3 0-24 10.7-24 24zm0 464c0 13.3 10.7 24 24 24l80 0c5.5 0 10.9-.8 15.9-2.3L498.2 472c-15.8 5.2-32.6 8-50.2 8c-10.1 0-19.9-.9-29.5-2.7c-1.6 3.2-2.5 6.9-2.5 10.7z"/>
           </svg>
           <input
             v-model="searchQuery"
@@ -261,6 +261,7 @@ defineComponent({ name: 'CouponsPage' });
   border: none;
   text-transform: capitalize;
   margin-bottom: 8px;
+  margin-left: 0px;
 }
 .coupon-categories-ion-segment-button.segment-button-checked {
   background: var(--ion-color-primary) !important;
@@ -299,5 +300,11 @@ defineComponent({ name: 'CouponsPage' });
   .coupon-container {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+.ion-padding-start {
+    --padding-start: var(--ion-padding, 8px);
+    -webkit-padding-start: var(--ion-padding, 8px);
+    padding-inline-start: var(--ion-padding, 8px);
 }
 </style>
