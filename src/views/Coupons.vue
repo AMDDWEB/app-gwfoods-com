@@ -157,7 +157,8 @@ const displayedCoupons = computed(() => {
       coupon.description?.toLowerCase().includes(query) ||
       coupon.category?.toLowerCase().includes(query) ||
       coupon.disclaimer?.toLowerCase().includes(query) ||
-      coupon.to_date?.toLowerCase().includes(query)
+      coupon.to_date?.toLowerCase().includes(query) ||
+      coupon.subtitle?.toLowerCase().includes(query)
     );
   }
 
