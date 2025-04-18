@@ -178,6 +178,8 @@ http://ionicframework.com/docs/theming/ */
 	margin-left: 8px;
 	font-size: 16px;
 	outline: none;
+	--placeholder-color: var(--ion-color-medium);
+  	--placeholder-font-size: 16px;
   }
   
   .app-custom-search-icon {

@@ -93,13 +93,19 @@ watchEffect(() => {
 }
 
 .barcode-container {
-    /* background: white; */
+    display: flex;
+    width: 100%;
     padding: 10px;
     border-radius: 8px;
     margin-top: 10px;
-    display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.barcode-container svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: none;
 }
 
 .barcode {

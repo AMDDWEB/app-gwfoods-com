@@ -325,5 +325,6 @@ ion-item {
   padding-bottom: 4px;
   display: flex;
   align-items: center;
+  text-transform: uppercase;
 }
 </style>

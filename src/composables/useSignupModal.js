@@ -536,7 +536,7 @@ export function useSignupModal() {
       max-width: 400px;
       margin: 0 auto;
       position: relative;
-      padding-bottom: 100px;
+      // padding-bottom: 100px;
     }
 
     .progress-steps {
@@ -652,7 +652,7 @@ export function useSignupModal() {
 
     .submit-button {
       margin-top: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
       height: 52px;
       font-size: 16px;
       font-weight: 600;
