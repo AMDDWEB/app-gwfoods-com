@@ -13,10 +13,13 @@
     <span class="coupon-expiration ion-text-center">Expires {{ formatExpDate(coupon.to_date) }}</span>
 
     <!-- Button -->
-    <ion-button size="small" :color="isCouponClipped(coupon.id) ? 'success' : 'danger'" fill="solid"
-      style="display: flex; align-items: center; width: 90%;" :disabled="isCouponClipped(coupon.id)"
+    <ion-button
+      size="small"
+      :color="isCouponClipped(coupon.id) ? 'success' : 'danger'"
+      fill="solid"
+      :disabled="isCouponClipped(coupon.id)"
       @click.stop="handleClipClick">
-      <ion-icon slot="start" name="coupons-regular"></ion-icon>
+      <ion-icon slot="start" name="coupons-regular" />
       {{ isCouponClipped(coupon.id) ? 'Clipped' : 'Clip Coupon' }}
     </ion-button>
   </ion-card>
@@ -63,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, defineProps, defineEmits } from 'vue';
 import { format } from 'date-fns';
 import { IonCard, IonImg, IonIcon, IonButton, IonText, IonSpinner, IonModal, IonHeader, IonToolbar, IonTitle, IonButtons, IonContent, IonSegment, IonSegmentButton, IonLabel } from '@ionic/vue';
 import { cut } from 'ionicons/icons';
@@ -86,7 +89,7 @@ const hasAppCardCoupons = ref(import.meta.env.VITE_HAS_APPCARD_COUPONS === "true
 const hasMidaxCoupons = ref(import.meta.env.VITE_HAS_MIDAX_COUPONS === "true");
 
 //const presentingElement = ref(document.querySelector('ion-router-outlet'));
-const emit = defineEmits(['clip']);
+const emit = defineEmits(['clipped']);
 const { openSignupModal, SignupModal } = useSignupModal();
 const { signIn } = useAuthModule();
 const { isCouponClipped, addClippedCoupon } = useClippedCoupons();
@@ -157,7 +160,7 @@ const handleClipClick = async (event) => {
       const response = await CouponsApi.clipCoupon(props.coupon.id);
       if (response) {
         addClippedCoupon(props.coupon.id);
-        emit('clip');
+        emit('clipped', props.coupon);
       }
     } else {
       // For AppCard system
@@ -170,7 +173,7 @@ const handleClipClick = async (event) => {
         const response = await CouponsApi.clipCoupon(props.coupon.id);
         // For AppCard, if we get here without an error, the clip was successful
         addClippedCoupon(props.coupon.id);
-        emit('clip');
+        emit('clipped', props.coupon);
       } catch (error) {
         console.error('Error clipping AppCard coupon:', error);
         throw error; // Re-throw to be caught by outer catch
@@ -239,6 +242,7 @@ ion-button {
   margin: 5px 10px;
   height: 32px;
   --border-width: 1.5px;
+  width: 90%;
 }
 
 ion-icon {

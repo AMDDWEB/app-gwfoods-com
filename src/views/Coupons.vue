@@ -54,25 +54,47 @@
           <ion-spinner name="crescent" class="app-loading-spinner"></ion-spinner>
         </div>
         
-        <div v-else-if="displayedCoupons.length === 0" class="no-coupons">
-          <h3>{{ selectedView === 'clipped' ? 'No Clipped Coupons' : searchQuery.value ? 'No Matching Coupons' : 'No Coupons Available' }}</h3>
-          <p>{{ selectedView === 'clipped' ? 'Clip some coupons to see them here!' : searchQuery.value ? 'Try a different search term.' : 'Check back later for new deals.' }}</p>
-        </div>
+        <ion-toast v-else-if="selectedView === 'clipped' && displayedCoupons.length === 0"
+          :is-open="selectedView === 'clipped' && displayedCoupons.length === 0"
+          message="When clipped, your coupons will be located here."
+          color="danger"
+          duration="6000"
+          position="bottom"
+        />
 
-        <div v-else class="coupon-container">
+        <div v-else-if="displayedCoupons.length > 0" class="coupon-container">
           <CouponCard
             v-for="coupon in displayedCoupons"
             :key="coupon.id"
             :coupon="coupon"
             @click="goToCouponDetails(coupon.id)"
+            @clipped="handleClip"
           />
         </div>
       </div>
 
-      <!-- Informative Messages -->
-      <div v-if="searchQuery && !loading && displayedCoupons.length > 0" class="search-info">
-        {{ displayedCoupons.length }} coupons match your search.
-      </div>
+      <ion-toast
+        :is-open="showSearchToast"
+        :message="`Your search for '${searchQuery}' returned ${displayedCoupons.length} coupons.`"
+        color="success"
+        position="bottom"
+        duration="0"
+      />
+      <ion-toast
+        :is-open="showClippedToast"
+        :message="`You have ${displayedCoupons.length} clipped coupons.`"
+        color="warning"
+        duration="6000"
+        position="bottom"
+      />
+      <ion-toast
+        :is-open="showClipSuccess"
+        @didDismiss="resetClipSuccess"
+        :message="`'${lastClippedTitle}' has been successfully clipped.`"
+        color="success"
+        duration="3000"
+        position="bottom"
+      />
     </ion-content>
 
     <SignupModal />
@@ -87,7 +109,7 @@ import { useClippedCoupons } from '@/composables/useClippedCoupons';
 import { useRouter } from 'vue-router';
 import CouponCard from '@/components/CouponCard.vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonSegment, IonSegmentButton, 
-         IonLabel, IonSpinner } from '@ionic/vue';
+         IonLabel, IonSpinner, IonToast } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 const router = useRouter();
@@ -172,6 +194,29 @@ const displayedCoupons = computed(() => {
 
   return Array.from(uniqueCoupons.values());
 });
+
+const showSearchToast = computed(() => 
+    Boolean(searchQuery.value) && 
+    searchQuery.value.length >= 3 && 
+    !loading.value && 
+    displayedCoupons.value.length > 0
+);
+const showClipSuccess = ref(false);
+const lastClippedTitle = ref('');
+
+function handleClip(coupon) {
+  lastClippedTitle.value = coupon.title;
+  showClipSuccess.value = true;
+}
+
+function resetClipSuccess() {
+  showClipSuccess.value = false;
+}
+
+const showClippedToast = computed(() =>
+  selectedView.value === 'clipped' &&
+  displayedCoupons.value.length > 0
+);
 
 // Function to load all coupons
 const loadAllCoupons = async () => {

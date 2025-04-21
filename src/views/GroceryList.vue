@@ -188,7 +188,7 @@ async function addSuggestion(coupon) {
         removing: false
     });
     newItem.value = '';
-    addedText.value = coupon.title;
+    addedText.value = coupon.subtitle;
     showAddToast.value = true;
 }
 
