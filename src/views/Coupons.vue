@@ -58,8 +58,9 @@
           :is-open="selectedView === 'clipped' && displayedCoupons.length === 0"
           message="When clipped, your coupons will be located here."
           color="danger"
-          duration="6000"
+          duration="3000"
           position="bottom"
+          position-anchor="mainTabBar"
         />
 
         <div v-else-if="displayedCoupons.length > 0" class="coupon-container">
@@ -79,13 +80,15 @@
         color="success"
         position="bottom"
         duration="0"
+        position-anchor="mainTabBar"
       />
       <ion-toast
         :is-open="showClippedToast"
         :message="`You have ${displayedCoupons.length} clipped coupons.`"
         color="warning"
-        duration="6000"
+        duration="3000"
         position="bottom"
+        position-anchor="mainTabBar"
       />
       <ion-toast
         :is-open="showClipSuccess"
@@ -94,6 +97,7 @@
         color="success"
         duration="3000"
         position="bottom"
+        position-anchor="mainTabBar"
       />
     </ion-content>
 

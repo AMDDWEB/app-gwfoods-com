@@ -1,5 +1,10 @@
 <template>
     <ion-page>
+    <IonActionSheet
+      :is-open="showActionSheet"
+      :buttons="actionSheetButtons"
+      @did-dismiss="showActionSheet = false"
+    />
     <!-- Page header: back button, title, and sort control -->
         <ion-header>
             <ion-toolbar>
@@ -10,7 +15,7 @@
                 </ion-buttons>
                 <ion-title>My Grocery List</ion-title>
                 <ion-buttons slot="end">
-                    <ion-button @click="showSortAlert = true">
+                    <ion-button v-if="items.length" @click="showActionSheet = true">
                         <ion-icon slot="icon-only" color="primary" name="sort-grocery-list-regular"
                             class="toolbar-icon"></ion-icon>
                     </ion-button>
@@ -73,16 +78,45 @@
             <IonAlert :is-open="showSortAlert" header="Sort Grocery List?"
                 message="This action cannot be undone. Do you want to sort items alphabetically?" :buttons="[
                     { text: 'Cancel', role: 'cancel', handler: () => showSortAlert = false },
-                    { text: 'Sort', handler: () => { sortItems(); showSortAlert = false; } }
+                    { text: 'Sort', handler: () => { sortItems(); showSortToast = true; } }
                 ]" />
 
+            <IonAlert
+              :is-open="showClearAlert"
+              header="Clear Grocery List?"
+              message="This action cannot be undone. Do you want to clear the grocery list?"
+              :buttons="[
+                { text: 'Cancel', role: 'cancel', handler: () => showClearAlert = false },
+                { text: 'Clear', handler: clearList }
+              ]"
+            />
+
             <!-- Toast for empty list notification -->
-            <IonToast :is-open="showEmptyToast" message="Your list is empty. Please add grocery items." duration="6000"
+            <IonToast :is-open="showEmptyToast" message="Your list is empty. Please add grocery items." duration="3000"
                 position="bottom" class="custom-toast" @did-dismiss="showEmptyToast = false" />
 
             <!-- Toast confirming item added -->
-            <IonToast :is-open="showAddToast" :message="`Added '${addedText}' to your grocery list!`" duration="1500"
+            <IonToast :is-open="showAddToast" :message="`'${addedText}' has been added to your grocery list.`" duration="1500"
                 position="bottom" class="success-toast" @did-dismiss="showAddToast = false" />
+
+            <!-- Sort success toast -->
+            <IonToast
+              :is-open="showSortToast"
+              message="Your grocery list is sorted alphabetically."
+              duration="3000"
+              position="bottom"
+              class="success-toast"
+              @did-dismiss="showSortToast = false"
+            />
+            <!-- Clear success toast -->
+            <IonToast
+              :is-open="showClearToast"
+              message="Your grocery list has been cleared."
+              duration="3000"
+              position="bottom"
+              class="success-toast"
+              @did-dismiss="showClearToast = false"
+            />
         </ion-content>
     </ion-page>
 </template>
@@ -114,7 +148,8 @@ import {
     IonItemOption,
     IonToast,
     IonBadge,
-    IonNote
+    IonNote,
+    IonActionSheet
 } from '@ionic/vue';
 import { useCouponDetails } from '@/composables/useCouponDetails.js';
 
@@ -130,6 +165,34 @@ const showEmptyToast = ref(false);
 const showAddToast = ref(false);
 const addedText = ref('');
 const showSuggestionsModal = ref(false);
+
+// Controls visibility of Sort/Clear action sheet
+const showActionSheet = ref(false);
+// Controls alert for clearing list
+const showClearAlert = ref(false);
+// Controls toast on successful sort
+const showSortToast = ref(false);
+// Controls toast on successful clear
+const showClearToast = ref(false);
+
+const actionSheetButtons = [
+  {
+    text: 'Sort Alphabetically',
+    handler: () => {
+      showSortAlert.value = true;
+    }
+  },
+  {
+    text: 'Clear List',
+    handler: () => {
+      showClearAlert.value = true;
+    }
+  },
+  {
+    text: 'Cancel',
+    role: 'cancel'
+  }
+];
 
 function openSuggestionsModal() {
     showSuggestionsModal.value = true;
@@ -195,6 +258,15 @@ async function addSuggestion(coupon) {
 // Sort current list alphabetically
 function sortItems() {
     items.value.sort((a, b) => a.text.localeCompare(b.text));
+}
+
+// Clear the grocery list and show confirmation toast
+function clearList() {
+    console.log('Clear List action invoked');
+    items.value = [];
+    window.localStorage.setItem('grocery-items', JSON.stringify([]));
+    showClearToast.value = true;
+    showClearAlert.value = false;
 }
 
 watch(items, (val) => {
@@ -327,4 +399,7 @@ ion-item {
   align-items: center;
   text-transform: uppercase;
 }
+
+
+
 </style>

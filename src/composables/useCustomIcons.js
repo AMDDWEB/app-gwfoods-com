@@ -58,7 +58,7 @@ import recipeTotalTimeRegularIcon from '../icons/regular/regular-plate-utensils-
 import myBarcodeRegularIcon from '../icons/regular/regular-barcode-read-circle-user.svg';
 import trashNotificationsRegularIcon from '../icons/regular/trash-can-clock-regular.svg';
 import editGroceryListRegularIcon from '../icons/regular/regular-list-radio-pen.svg';
-import sortGroceryListRegularIcon from '../icons/regular/arrow-up-a-z-regular.svg';
+import sortGroceryListRegularIcon from '../icons/regular/bars-filter-regular.svg';
 import trashCanRegularIcon from '../icons/regular/trash-can-regular.svg'
 
 //Duotone icons
