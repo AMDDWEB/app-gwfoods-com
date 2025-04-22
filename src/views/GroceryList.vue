@@ -128,6 +128,7 @@ import { TokenStorage } from '@/utils/tokenStorage';
 import { useClippedCoupons } from '@/composables/useClippedCoupons.js';
 const { addClippedCoupon } = useClippedCoupons();
 import { ref, watch, onMounted, computed } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 import {
     IonPage,
     IonHeader,
@@ -299,6 +300,15 @@ function removeViaCheckbox(item) {
         if (index > -1) items.value.splice(index, 1);
     }, 1000);
 }
+
+// Clear all toasts when leaving the GroceryList page
+onBeforeRouteLeave((to, from, next) => {
+  showEmptyToast.value = false;
+  showAddToast.value = false;
+  showSortToast.value = false;
+  showClearToast.value = false;
+  next();
+});
 </script>
 
 <style scoped>

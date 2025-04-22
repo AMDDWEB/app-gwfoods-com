@@ -1,5 +1,5 @@
 <template>
-  <ion-page>
+  <IonPage>
     <ion-header>
       <!-- All/Clipped Toggle First -->
       <ion-toolbar>
@@ -102,11 +102,12 @@
     </ion-content>
 
     <SignupModal />
-  </ion-page>
+  </IonPage>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { onBeforeRouteLeave } from 'vue-router';
 import { useCouponDetails } from '@/composables/useCouponDetails';
 import { useSignupModal } from '@/composables/useSignupModal';
 import { useClippedCoupons } from '@/composables/useClippedCoupons';
@@ -216,6 +217,15 @@ function handleClip(coupon) {
 function resetClipSuccess() {
   showClipSuccess.value = false;
 }
+
+// Clear toast state when navigating away
+onBeforeRouteLeave((to, from, next) => {
+  searchQuery.value = '';
+  selectedView.value = 'all';
+  showClipSuccess.value = false;
+  next();
+});
+
 
 const showClippedToast = computed(() =>
   selectedView.value === 'clipped' &&

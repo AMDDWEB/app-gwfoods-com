@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar id="notificationsToolbar">
         <ion-buttons slot="start">
           <ion-button @click="$router.go(-1)">
             <ion-icon slot="icon-only" color="primary" name="back-button" class="toolbar-icon"></ion-icon>
@@ -43,20 +43,25 @@
         </ion-item>
       </ion-list>
 
-      <!-- No Notifications Message -->
-      <ion-card v-else class="no-notifications-card">
-        <span class="no-notifications-label">No New Notifications</span><br>
-        <span class="no-notifications-message">You have no unread notifications.</span>
-      </ion-card>
+      <ion-toast
+        :is-open="showNoNotificationsToast"
+        message="You have no new notifications."
+        color="danger"
+        position="top"
+        duration="6000"
+        position-anchor="notificationsToolbar"
+        @did-dismiss="resetNoNotificationsToast"
+      />
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, defineComponent } from 'vue';
+import { ref, onMounted, computed, watch, defineComponent } from 'vue';
 import apiNotifications from '../axios/apiNotifications';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonLabel, IonIcon, IonSpinner, IonRefresher, IonRefresherContent, alertController, IonBadge } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonList, IonItem, IonLabel, IonIcon, IonSpinner, IonRefresher, IonRefresherContent, alertController, IonBadge, IonToast } from '@ionic/vue';
 import { useNotificationDetails } from '@/composables/useNotificationDetails';
+import { onBeforeRouteLeave } from 'vue-router';
 
 const loading = ref(true);
 const notifications = ref([]);
@@ -136,6 +141,28 @@ const addOrdinalSuffix = (day) => {
 // Trigger Notifications on Page Load
 onMounted(() => {
   fetchNotifications(); // Works for both page reload and revisit
+});
+
+// State and reset for no-notifications toast
+const showNoNotificationsToast = ref(false);
+function resetNoNotificationsToast() {
+  showNoNotificationsToast.value = false;
+}
+
+// Show toast when loading completes with no notifications
+watch(
+  () => loading.value,
+  (isLoading) => {
+    if (!isLoading && notifications.value.length === 0) {
+      showNoNotificationsToast.value = true;
+    }
+  }
+);
+
+// Clear the no-notifications toast when navigating away
+onBeforeRouteLeave((to, from, next) => {
+  showNoNotificationsToast.value = false;
+  next();
 });
 </script>
 
