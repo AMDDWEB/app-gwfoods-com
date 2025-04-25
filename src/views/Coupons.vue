@@ -79,8 +79,7 @@
         :message="`Your search for '${searchQuery}' returned ${displayedCoupons.length} coupons.`"
         color="success"
         position="bottom"
-        duration="0"
-        position-anchor="mainTabBar"
+        duration="3000"
       />
       <ion-toast
         :is-open="showClippedToast"
@@ -131,10 +130,19 @@ const searchTimeout = ref(null);
 const uniqueCouponIds = ref(new Set());
 
 const sortedCategories = computed(() => {
-  const filteredCategories = availableCategories.value
-    .filter(category => category !== 'All Coupons')
+  // Exclude "All Coupons" and "Weekly Specials" from alphabetical sort
+  const otherCategories = availableCategories.value
+    .filter(category => category !== 'All Coupons' && category !== 'Weekly Specials')
     .sort((a, b) => a.localeCompare(b));
-  return ['All Coupons', ...filteredCategories];
+
+  // Start with "All Coupons" always first
+  const result = ['All Coupons'];
+  // Then add "Weekly Special" if present
+  if (availableCategories.value.includes('Weekly Specials')) {
+    result.push('Weekly Specials');
+  }
+  // Finally, append the rest alphabetically
+  return [...result, ...otherCategories];
 });
 
 // Watch for changes in the coupons array to sync clipped coupons

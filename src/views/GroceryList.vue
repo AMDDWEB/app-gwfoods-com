@@ -36,10 +36,10 @@
                     <IonItem button detail="false" lines="full" v-for="coupon in suggestions" :key="coupon.id"
                         @click="addSuggestion(coupon)">
                         <IonLabel>
-                            <h3>{{ coupon.subtitle }}</h3>
+                            <h3 class="grocery-item">{{ coupon.subtitle }}</h3>
                             <p class="suggestion-description">{{ coupon.description }}</p>
                         </IonLabel>
-                        <IonBadge class="coupon-savings-badge" color="success">
+                        <IonBadge class="coupon-savings-badge-suggest" color="success">
                           {{ coupon.title }}
                         </IonBadge>
                     </IonItem>
@@ -56,7 +56,7 @@
                         <IonCheckbox slot="start" @ionChange="removeViaCheckbox(item)" color="primary" />
                         <IonLabel>
                             <h3 class="grocery-item">{{ item.text }}</h3>
-                            <p class="helper-text" v-if="item.helperText">{{ item.helperText }}</p>
+                            <!-- <p class="helper-text" v-if="item.helperText">{{ item.helperText }}</p> -->
                         </IonLabel>
                         <IonBadge
                           v-if="item.badgeText"
@@ -76,7 +76,7 @@
 
             <!-- Sort confirmation alert -->
             <IonAlert :is-open="showSortAlert" header="Sort Grocery List?"
-                message="This action cannot be undone. Do you want to sort items alphabetically?" :buttons="[
+                message="This action cannot be undone. Do you want to sort your grocery items alphabetically?" :buttons="[
                     { text: 'Cancel', role: 'cancel', handler: () => showSortAlert = false },
                     { text: 'Sort', handler: () => { sortItems(); showSortToast = true; } }
                 ]" />
@@ -84,7 +84,7 @@
             <IonAlert
               :is-open="showClearAlert"
               header="Clear Grocery List?"
-              message="This action cannot be undone. Do you want to clear the grocery list?"
+              message="This action cannot be undone. Do you want to clear your grocery list?"
               :buttons="[
                 { text: 'Cancel', role: 'cancel', handler: () => showClearAlert = false },
                 { text: 'Clear', handler: clearList }
@@ -347,6 +347,11 @@ ion-checkbox::part(container) {
 
 .grocery-item {
     text-transform: capitalize;
+    display: inline-block;
+    white-space: nowrap;            /* Prevents wrapping */
+    overflow: hidden;               /* Hides overflow content */
+    text-overflow: ellipsis;        /* Adds ellipsis (...) when content overflows */
+    max-width: 22ch;                /* Limits to approximately 20 characters */
 }
 
 ion-toast.custom-toast {
@@ -398,6 +403,20 @@ ion-item {
   position: relative;
 }
 .coupon-savings-badge {
+  font-size: 12px;
+  color: var(--ion-color-light);
+  position: absolute;
+  right: 15px;
+  /* top: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px; */
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.coupon-savings-badge-suggest {
   font-size: 12px;
   color: var(--ion-color-light);
   position: absolute;
