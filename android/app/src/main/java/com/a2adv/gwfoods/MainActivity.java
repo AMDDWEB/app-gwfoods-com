@@ -1,4 +1,4 @@
-package com.allianceharshaadvertising.marketplacedev;
+package com.a2adv.gwfoods;
 
 import com.getcapacitor.BridgeActivity;
 

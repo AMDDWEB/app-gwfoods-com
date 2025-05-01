@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Market Place</string>
-    <string name="title_activity_main">Market Place</string>
-    <string name="package_name">com.allianceharshaadvertising.marketplacedev</string>
-    <string name="custom_url_scheme">com.allianceharshaadvertising.marketplacedev</string>
+    <string name="app_name">G&amp;W Foods</string>
+    <string name="title_activity_main">G&amp;W Foods</string>
+    <string name="package_name">com.a2adv.gwfoods</string>
+    <string name="custom_url_scheme">com.a2adv.gwfoods</string>
 </resources>

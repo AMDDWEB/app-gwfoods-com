@@ -7,10 +7,23 @@
           <ion-button @click="closeModal">Close</ion-button>
         </ion-buttons>
       </ion-toolbar>
+      <ion-toolbar>
+        <div class="app-search-container">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="app-custom-search-icon">
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM288 176c0-44.2-35.8-80-80-80s-80 35.8-80 80c0 48.8 46.5 111.6 68.6 138.6c6 7.3 16.8 7.3 22.7 0c22.1-27 68.6-89.8 68.6-138.6zm-112 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
+          </svg>
+          <input
+            v-model="searchQuery"
+            placeholder="Search locations..."
+            @input="handleSearch"
+            class="app-search-input"
+          />
+        </div>
+      </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
-        <ion-item v-for="location in locations" :key="location.id">
+        <ion-item v-for="location in filteredLocations" :key="location.id">
           <ion-icon name="location-dot" color="primary" slot="start"></ion-icon>
           <ion-label>
             <h2>{{ location.title }}</h2>
@@ -25,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonToggle, IonButtons, IonButton } from '@ionic/vue';
 import apiLocations from '../axios/apiLocations';
 
@@ -39,6 +52,7 @@ const emit = defineEmits(['update:is-open', 'location-selected']);
 
 const locations = ref([]);
 const selectedLocation = ref(null);
+const searchQuery = ref('');
 
 // Initialize on mount
 onMounted(async () => {
@@ -158,6 +172,19 @@ function closeModal() {
   
   emit('update:is-open', false);
 }
+
+const filteredLocations = computed(() => {
+  if (!searchQuery.value) return locations.value;
+  const query = searchQuery.value.toLowerCase();
+  return locations.value.filter(location => 
+    location.title?.toLowerCase().includes(query) ||
+    location.address?.address?.toLowerCase().includes(query)
+  );
+});
+
+const handleSearch = () => {
+  // The filtering is handled by the computed property
+};
 </script>
 
 <style scoped>
@@ -165,5 +192,78 @@ function closeModal() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap !important;
+}
+
+.app-search-container {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  margin: 8px 16px;
+  width: auto;
+  height: auto;
+  box-sizing: border-box;
+  justify-content: flex-start;
+}
+
+.app-custom-search-icon {
+  width: 16px;
+  height: 16px;
+  fill: var(--ion-color-medium);
+  margin-right: 8px;
+  flex-shrink: 0;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.app-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--ion-color-dark);
+  outline: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.app-search-input::placeholder {
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+ion-toolbar {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  padding: 0;
+}
+
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+ion-item:last-of-type {
+  --border-width: 0;
+}
+
+ion-label {
+  margin: 0;
+}
+
+ion-label h2 {
+  margin-bottom: 4px;
+}
+
+ion-label p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
 }
 </style>
