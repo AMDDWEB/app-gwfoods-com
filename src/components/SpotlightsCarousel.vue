@@ -1,6 +1,6 @@
 <template>
   <div class="ion-margin-bottom">
-    <ion-list lines="none">
+    <ion-list lines="none" v-if="spotlights.length > 0">
       <ion-item>
         <ion-text>
           <h3 class="app-list-heading">Spotlight Specials</h3>
@@ -19,13 +19,13 @@
           </div>
         </swiper-slide>
       </swiper>
-      <div v-else class="no-items-container">
+      <!-- <div v-else class="no-items-container">
         <div class="no-items-card">
           <div class="overlay"></div>
           <h3>No Spotlight Specials Available</h3>
           <p>Check back later for new spotlight specials.</p>
         </div>
-      </div>
+      </div> -->
     </div>
     <div v-else class="skeleton-container">
       <ion-skeleton-text :animated="true" class="skeleton-spotlight"></ion-skeleton-text>

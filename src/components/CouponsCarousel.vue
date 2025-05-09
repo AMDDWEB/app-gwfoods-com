@@ -1,6 +1,6 @@
 <template>
   <div class="ion-margin-bottom">
-    <ion-list lines="none">
+    <ion-list lines="none" v-if="(!hasMidaxCoupons || hasStoreId) && displayCoupons.length > 0">
       <ion-item @click="goToCouponsArchive">
         <ion-text>
           <h3 class="app-list-heading">
@@ -24,13 +24,13 @@
           <CouponCard :coupon="coupon" @click="goToCouponDetails(coupon.id)" @clip="handleClipCoupon(coupon.id)" />
         </swiper-slide>
       </swiper>
-      <div v-else class="no-store-container">
+      <!-- <div v-else class="no-store-container">
         <div class="no-store-card">
           <div class="overlay"></div>
           <h3>No Coupons Available</h3>
           <p>Check back later for new deals.</p>
         </div>
-      </div>
+      </div> -->
     </div>
     <div v-else>
       <CouponsSkeleton :count="1" />
