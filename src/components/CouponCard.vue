@@ -146,7 +146,7 @@ const handleClipClick = async (event) => {
   try {
     if (hasMidaxCoupons.value) {
       // For Midax, check card number directly
-      let cardNumber = localStorage.getItem('cardNumber');
+      let cardNumber = localStorage.getItem('CardNumber');
       const storeId = localStorage.getItem('storeId');
       const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('access_token');
       

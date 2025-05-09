@@ -79,7 +79,7 @@ class Customer {
         ReceiveEmail: profile.ReceiveEmail,
         ReceiveSMS: profile.ReceiveSMS,
         PreferedStore: profile.PreferedStore,
-        cardNumber: profile.cardNumber
+        CardNumber: profile.CardNumber || profile.cardNumber
       }
     });
   }

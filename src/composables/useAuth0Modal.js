@@ -17,7 +17,7 @@ export const useAuthModule = () => {
 
   const signIn = async () => {
     const accessToken = localStorage.getItem('accessToken') || localStorage.getItem('access_token');
-    const cardNumber = localStorage.getItem('cardNumber');
+    const cardNumber = localStorage.getItem('CardNumber');
     const storeId = localStorage.getItem('storeId');
     
     if (accessToken && (cardNumber || storeId) && isAuthenticated.value) {
@@ -39,7 +39,7 @@ export const useAuthModule = () => {
     // Clear all auth-related localStorage items
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refresh_token');
-    localStorage.removeItem('cardNumber');
+    localStorage.removeItem('CardNumber');
     localStorage.removeItem('firstName');
     
     await logout({

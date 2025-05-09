@@ -44,8 +44,8 @@ class CouponsApi {
       params.limit = '25'; // Fixed limit for Midax
       params.offset = offset.toString();
       
-      // Only add card number if authenticated
-      const cardNumber = localStorage.getItem('cardNumber');
+      // Only add card number if authenticated - check both formats
+      const cardNumber = localStorage.getItem('CardNumber') || localStorage.getItem('cardNumber');
       if (cardNumber) {
         params.Card_number = cardNumber;
       }
@@ -104,7 +104,7 @@ class CouponsApi {
 
     if (hasMidaxCoupons) {
       // Try both casing variants since there's inconsistency in the codebase
-      let cardNumber = localStorage.getItem('cardNumber');
+      let cardNumber = localStorage.getItem('CardNumber');
       if (!cardNumber) {
         cardNumber = localStorage.getItem('cardNumber');
       }

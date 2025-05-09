@@ -40,8 +40,10 @@ watch(isAuthenticated, async (newValue) => {
       
       if (Array.isArray(userDetailsArray) && userDetailsArray.length > 0) {
         const userDetails = userDetailsArray[0]
-        if (userDetails.cardNumber) {
-          localStorage.setItem('cardNumber', userDetails.cardNumber)
+        // Handle both CardNumber and cardNumber formats
+        const cardNumberValue = userDetails.CardNumber || userDetails.cardNumber;
+        if (cardNumberValue) {
+          localStorage.setItem('CardNumber', cardNumberValue)
         }
         if (userDetails.FirstName) {
           localStorage.setItem('firstName', userDetails.FirstName)
@@ -50,7 +52,7 @@ watch(isAuthenticated, async (newValue) => {
         window.dispatchEvent(new CustomEvent('userSignedUp', {
           detail: {
             loyaltyNumber: userDetails.PhoneNumber || '',
-            cardNumber: userDetails.cardNumber || ''
+            cardNumber: userDetails.CardNumber || userDetails.cardNumber || ''
           }
         }))
       }
@@ -71,13 +73,15 @@ async function checkForExistingUser() {
     if (response.data) {
       localStorage.setItem('userData', JSON.stringify(response.data))
       if (import.meta.env.VITE_HAS_MIDAX_COUPONS === "true") {
-        if (response.data.card_number) {
-          localStorage.setItem('cardNumber', response.data.card_number)
+        // Handle multiple possible case formats from API
+        const cardNumberValue = response.data.CardNumber || response.data.cardNumber || response.data.card_number;
+        if (cardNumberValue) {
+          localStorage.setItem('CardNumber', cardNumberValue)
           
           window.dispatchEvent(new CustomEvent('userSignedUp', {
             detail: {
               loyaltyNumber: response.data.phone_number || '',
-              cardNumber: response.data.card_number || ''
+              cardNumber: response.data.CardNumber || response.data.cardNumber || response.data.card_number || ''
             }
           }))
         }

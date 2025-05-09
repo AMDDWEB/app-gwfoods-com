@@ -95,7 +95,7 @@ import { TokenStorage } from '@/utils/tokenStorage';
 const { getLoyaltyNumber } = useSignupModal();
 const { signOut } = useAuthModule();
 const loyaltyNumber = ref('');
-const cardNumber = ref(localStorage.getItem('cardNumber') || '');
+const cardNumber = ref(localStorage.getItem('CardNumber') || '');
 const logoUrl = ref(import.meta.env.VITE_PRIMARY_LOGO);
 const showUserProfileModal = ref(false);
 const userName = ref('');
@@ -124,7 +124,7 @@ const presentUserProfileModal = () => {
 // Set loyalty number on component mount and add event listener
 onMounted(async () => {
     loyaltyNumber.value = getLoyaltyNumber();
-    cardNumber.value = localStorage.getItem('cardNumber');
+    cardNumber.value = localStorage.getItem('CardNumber');
     userName.value = localStorage.getItem('firstName') || '';
 
     // Fetch customer info and offer details

@@ -106,6 +106,17 @@ const addOrdinalSuffix = (day) => {
 };
 
 const closeModal = () => {
+  // Clean up any existing PDF content
+  if (pdfContainer.value) {
+    pdfContainer.value.innerHTML = '';
+  }
+  
+  // Reset current page and scale
+  scale.value = 1;
+  currentX = 0;
+  currentY = 0;
+  
+  // Tell parent component to close modal
   emit('update:isOpen', false);
 };
 

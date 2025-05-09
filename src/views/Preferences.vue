@@ -144,13 +144,13 @@ const clickTimer = ref(null);
 const { getLoyaltyNumber } = useSignupModal();
 const loyaltyNumber = ref('');
 const showBarcodeModal = ref(false);
-const cardNumber = ref(localStorage.getItem('cardNumber') || '');
+const cardNumber = ref(localStorage.getItem('CardNumber') || '');
 
 // Add ionViewWillEnter lifecycle hook
 const ionViewWillEnter = () => {
     // Check for authentication each time the page is entered
     loyaltyNumber.value = getLoyaltyNumber();
-    cardNumber.value = localStorage.getItem('cardNumber') || '';
+    cardNumber.value = localStorage.getItem('CardNumber') || '';
 };
 
 // Expose the ionViewWillEnter hook

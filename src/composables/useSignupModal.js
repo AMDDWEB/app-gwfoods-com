@@ -221,7 +221,7 @@ export function useSignupModal() {
         loyaltyNumber.value = phoneNumber.value;
         cardNumber.value = customerInfo.cardNumber;
         localStorage.setItem('loyaltyNumber', phoneNumber.value);
-        localStorage.setItem('cardNumber', customerInfo.cardNumber);
+        localStorage.setItem('CardNumber', customerInfo.cardNumber);
 
         isAuthenticated.value = true;
         currentStep.value = 3;
@@ -281,7 +281,7 @@ export function useSignupModal() {
   };
 
   const getCardNumber = () => {
-    return cardNumber.value || localStorage.getItem('cardNumber') || '';
+    return cardNumber.value || localStorage.getItem('CardNumber') || '';
   };
 
   const renderPreviewStep = () => {

@@ -218,6 +218,8 @@ onMounted(() => {
 
 watch(() => route.params.id, (newId) => {
   if (newId) {
+    // Close PDF modal when location changes
+    closePdfModal(false);
     loadLocationData();
   }
 });
@@ -322,17 +324,26 @@ const setAsMyStore = async () => {
             handler: () => {
               loading.value = true;
 
+              // Save location data to local storage
               localStorage.setItem('selectedLocation', JSON.stringify(locationData.value));
               isSelectedLocation.value = true;
               isPrimaryLocation.value = true;
 
+              // Close PDF modal
+              closePdfModal(false);
+              
+              // Dispatch location changed event
               window.dispatchEvent(new CustomEvent('locationChanged', {
                 detail: locationData.value
               }));
-
+              
+              // Show loading indicator and refresh data
+              loading.value = true;
               setTimeout(() => {
-                location.reload();
-              }, 1000);
+                loadLocationData().then(() => {
+                  loading.value = false;
+                });
+              }, 300);
             }
           }
         ]
@@ -388,14 +399,13 @@ const openPdfModal = (type) => {
 };
 
 const closePdfModal = (isOpen) => {
-  if (!isOpen) {
-    pdfModalState.value = {
-      isOpen: false,
-      url: '',
-      type: '',
-      startDate: ''
-    };
-  }
+  // Reset modal state
+  pdfModalState.value = {
+    isOpen: false,
+    url: '',
+    type: '',
+    startDate: ''
+  };
 };
 
 // Update the click handlers
