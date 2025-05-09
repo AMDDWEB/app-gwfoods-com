@@ -92,7 +92,7 @@ const hasMidaxCoupons = ref(import.meta.env.VITE_HAS_MIDAX_COUPONS === "true");
 const emit = defineEmits(['clipped']);
 const { openSignupModal, SignupModal } = useSignupModal();
 const { signIn } = useAuthModule();
-const { isCouponClipped, addClippedCoupon } = useClippedCoupons();
+const { addClippedCoupon, isCouponClipped, showErrorAlert, closeErrorAlert } = useClippedCoupons();
 const isClipping = ref(false);
 const showCouponModal = ref(false);
 const selectedSegment = ref('details');

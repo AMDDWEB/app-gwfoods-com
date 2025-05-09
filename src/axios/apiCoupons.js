@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { TokenStorage } from '../utils/tokenStorage';
+import { alertController } from '@ionic/vue';
 
 let couponsInstance;
 
@@ -152,6 +153,7 @@ class CouponsApi {
         return response.data;
       } catch (error) {
         console.error('Error clipping coupon:', error.response?.data);
+        this.showErrorDialog('This coupon is no longer available!');
         throw error;
       }
     } else if (hasAppCardCoupons) {
@@ -171,6 +173,7 @@ class CouponsApi {
         return response.data;
       } catch (error) {
         console.error(error);
+        this.showErrorDialog('This coupon is no longer available!');
         throw error;
       }
     } else {
@@ -278,6 +281,22 @@ class CouponsApi {
 
   isAuthenticated() {
     return TokenStorage.hasTokens();
+  }
+  
+  // Show error dialog when a coupon is no longer available
+  async showErrorDialog(message) {
+    const alert = await alertController.create({
+      header: 'Error',
+      message: message,
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }
 

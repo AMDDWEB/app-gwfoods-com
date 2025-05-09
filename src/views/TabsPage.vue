@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { useCouponDetails } from '@/composables/useCouponDetails';
 import { TokenStorage } from '@/utils/tokenStorage';
@@ -48,7 +48,8 @@ export default {
     const { coupons, loading, fetchCoupons } = useCouponDetails();
     const hasAppCardCoupons = ref(import.meta.env.VITE_HAS_APPCARD_COUPONS === "true");
     const hasMidaxCoupons = ref(import.meta.env.VITE_HAS_MIDAX_COUPONS === "true");
-    const hasStoreId = computed(() => !!localStorage.getItem('storeId'));
+    const storeId = ref(localStorage.getItem('storeId'));
+    const hasStoreId = computed(() => !!storeId.value);
 
     // Dynamic coupon availability
     const hasCoupons = computed(() => coupons.value.length > 0);
@@ -56,6 +57,8 @@ export default {
     // Watch for location changes
     watch(() => localStorage.getItem('selectedLocation'), async (newLocation) => {
       if (newLocation) {
+        // Update store ID from localStorage
+        storeId.value = localStorage.getItem('storeId');
         await fetchCoupons({ limit: 10, offset: 0 });
       }
     });
@@ -67,11 +70,19 @@ export default {
       }
     });
 
+    // Create a handler function that we can reference for both adding and removing event listener
+    const handleLocationChanged = async (event) => {
+      // Ensure we update the storeId ref when location changes
+      storeId.value = localStorage.getItem('storeId');
+      await fetchCoupons({ limit: 10, offset: 0 });
+    };
+
     onMounted(async () => {
       // Initial coupon fetch
       if (hasMidaxCoupons.value) {
         const selectedLocation = localStorage.getItem('selectedLocation');
         if (selectedLocation) {
+          storeId.value = localStorage.getItem('storeId');
           await fetchCoupons({ limit: 10, offset: 0 });
         }
       } else {
@@ -80,9 +91,20 @@ export default {
       }
 
       // Listen for location change events
-      window.addEventListener('locationChanged', async () => {
-        await fetchCoupons({ limit: 10, offset: 0 });
+      window.addEventListener('locationChanged', handleLocationChanged);
+
+      // Additional direct check for storeId changes
+      window.addEventListener('storage', (event) => {
+        if (event.key === 'storeId' || event.key === 'selectedLocation') {
+          storeId.value = localStorage.getItem('storeId');
+        }
       });
+    });
+
+    // Clean up event listeners when component is unmounted
+    onUnmounted(() => {
+      window.removeEventListener('locationChanged', handleLocationChanged);
+      window.removeEventListener('storage', handleLocationChanged);
     });
 
     return {

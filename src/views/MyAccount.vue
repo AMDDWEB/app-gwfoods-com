@@ -90,10 +90,12 @@ import { isPlatform } from '@ionic/vue';
 import { callbackUri } from '@/main';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { TokenStorage } from '@/utils/tokenStorage';
+import { useClippedCoupons } from '@/composables/useClippedCoupons';
 
 // Importing method to fetch loyalty number from a composable
 const { getLoyaltyNumber } = useSignupModal();
 const { signOut } = useAuthModule();
+const { clippedCoupons } = useClippedCoupons();
 const loyaltyNumber = ref('');
 const cardNumber = ref(localStorage.getItem('CardNumber') || '');
 const logoUrl = ref(import.meta.env.VITE_PRIMARY_LOGO);
@@ -198,16 +200,27 @@ const onBarcodeRender = () => {
 // Function to handle Auth0 logout
 const handleAuth0Logout = async () => {
     try {
-        // Use the signOut method from useAuthModule which now handles token clearing and Auth0 logout
+        // Clear clipped coupons from memory before sign out
+        clippedCoupons.value = new Set();
+        localStorage.removeItem('clippedCoupons');
+        
+        // Use the signOut method from useAuthModule which handles token clearing and Auth0 logout
         await signOut();
+        
+        // Force a complete app refresh to reset UI state and go to homepage
+        window.location.href = '/';
     } catch (error) {
         console.error('Logout error:', error);
         
         // Even if the Auth0 logout fails, ensure tokens are cleared
         TokenStorage.clearTokens();
         
-        // Force navigate to home as a fallback
-        router.replace('/');
+        // Clear clipped coupons as a fallback
+        clippedCoupons.value = new Set();
+        localStorage.removeItem('clippedCoupons');
+        
+        // Force a complete app refresh even in error case
+        window.location.href = '/';
     }
 };
 

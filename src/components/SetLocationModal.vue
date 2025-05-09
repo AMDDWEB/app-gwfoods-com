@@ -1,9 +1,9 @@
 <template>
-  <ion-modal :is-open="isOpen" @didDismiss="hasMidaxCoupons ? null : closeModal" :swipe-to-close="!hasMidaxCoupons" :backdropDismiss="!hasMidaxCoupons">
+  <ion-modal :is-open="isOpen" @didDismiss="closeModal" :swipe-to-close="true" :backdropDismiss="true">
     <ion-header>
       <ion-toolbar>
         <ion-title>Select My Store</ion-title>
-        <ion-buttons slot="end" v-if="!hasMidaxCoupons">
+        <ion-buttons slot="end">
           <ion-button @click="closeModal">Close</ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -59,9 +59,8 @@ onMounted(async () => {
   await fetchLocations();
   await initializeSelectedLocation();
   
-  if (hasMidaxCoupons && !localStorage.getItem('selectedLocation')) {
-    emit('update:is-open', true);
-  }
+  // Removed automatic modal opening to improve user experience
+  // Location selection will now be fully user-initiated
 });
 
 // Watch for modal opening
@@ -158,9 +157,6 @@ async function toggleLocation(location) {
 }
 
 function closeModal() {
-  // Only prevent closing if Midax coupons is enabled AND no location is selected
-  if (hasMidaxCoupons && !localStorage.getItem('selectedLocation')) return;
-  
   // Ensure one final check of selected location before closing
   const storedLocation = localStorage.getItem('selectedLocation');
   if (storedLocation) {

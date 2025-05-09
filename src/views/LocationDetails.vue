@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import apiLocations from '../axios/apiLocations';
 import { Share } from '@capacitor/share';
@@ -214,13 +214,19 @@ const loadLocationData = async () => {
 onMounted(() => {
   loadLocationData();
   checkIfSelectedLocation();
+
+  // Listen for location changes from external components
+  window.addEventListener('locationChanged', handleLocationChanged);
 });
 
 watch(() => route.params.id, (newId) => {
   if (newId) {
     // Close PDF modal when location changes
     closePdfModal(false);
-    loadLocationData();
+    loadLocationData().then(() => {
+      // Check if this is the selected location after data is loaded
+      checkIfSelectedLocation();
+    });
   }
 });
 
@@ -282,6 +288,20 @@ const checkIfSelectedLocation = () => {
   }
 };
 
+// Handler for location changed event from external components
+const handleLocationChanged = (event) => {
+  if (event.detail && event.detail.id) {
+    // If the currently viewed location is the one that was selected
+    if (parseInt(props.id) === event.detail.id) {
+      isSelectedLocation.value = true;
+    } else {
+      isSelectedLocation.value = false;
+    }
+    // Refresh data to ensure we have the latest
+    loadLocationData();
+  }
+};
+
 const isPrimaryLocation = computed(() => {
   const storedLocation = JSON.parse(localStorage.getItem('selectedLocation') || '{}');
   return storedLocation.id === parseInt(props.id);
@@ -326,6 +346,8 @@ const setAsMyStore = async () => {
 
               // Save location data to local storage
               localStorage.setItem('selectedLocation', JSON.stringify(locationData.value));
+              // Set the store ID for coupons
+              localStorage.setItem('storeId', locationData.value.coupon_id || null);
               isSelectedLocation.value = true;
               isPrimaryLocation.value = true;
 
@@ -412,6 +434,11 @@ const closePdfModal = (isOpen) => {
 const openWeeklyAd = () => openPdfModal('weekly');
 const openRewardsURL = () => openPdfModal('rewards');
 const openSale = () => openPdfModal('sale');
+
+// Clean up event listener when component is unmounted
+onUnmounted(() => {
+  window.removeEventListener('locationChanged', handleLocationChanged);
+});
 
 // Remove the old modal state refs
 // Remove: isWeeklyAdModalOpen, isRewardsModalOpen, isSaleModalOpen

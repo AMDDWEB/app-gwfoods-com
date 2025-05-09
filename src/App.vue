@@ -1,21 +1,33 @@
 <template>
   <ion-app>
     <ion-router-outlet />
+    
+    <!-- Global Error Alert for coupon clipping -->
+    <ion-alert
+      :is-open="showErrorAlert"
+      header="Error"
+      :message="errorMessage"
+      :buttons="[{ text: 'OK', role: 'cancel', handler: () => closeErrorAlert() }]"
+    />
   </ion-app>
 </template>
 
 <script setup>
-import { IonApp, IonRouterOutlet, isPlatform } from '@ionic/vue'
+import { IonApp, IonRouterOutlet, IonAlert, isPlatform } from '@ionic/vue'
 import { Browser } from '@capacitor/browser'
 import { App as CapApp } from '@capacitor/app'
 import { AppTrackingTransparency } from 'capacitor-plugin-app-tracking-transparency'
-import { watch } from 'vue'
+import { watch, onMounted, onUnmounted } from 'vue'
+import { useClippedCoupons } from './composables/useClippedCoupons'
 import CustomerApi from './axios/apiCustomer'
 import { useAuthModule } from './composables/useAuth0Modal'
 import { useRouter } from 'vue-router'
 import Customer from './axios/apiCustomer'
 
 const router = useRouter()
+
+// Get alert state from the useClippedCoupons composable
+const { showErrorAlert, errorMessage, closeErrorAlert } = useClippedCoupons()
 
 const {
   getAccessTokenSilently,

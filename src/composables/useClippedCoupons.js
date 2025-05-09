@@ -1,9 +1,13 @@
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import CouponsApi from '@/axios/apiCoupons';
 
 // Initialize with stored coupons or empty array
 const storedCoupons = localStorage.getItem('clippedCoupons');
 const clippedCoupons = ref(new Set(storedCoupons ? JSON.parse(storedCoupons) : []));
+
+// State for error alert
+const showErrorAlert = ref(false);
+const errorMessage = ref('This coupon is no longer available!');
 
 // Persist changes to localStorage
 watch(() => Array.from(clippedCoupons.value), (newValue) => {
@@ -11,6 +15,23 @@ watch(() => Array.from(clippedCoupons.value), (newValue) => {
 }, { deep: true });
 
 export function useClippedCoupons() {
+  // Set up event listeners for coupon errors
+  onMounted(() => {
+    window.addEventListener('couponError', handleCouponError);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('couponError', handleCouponError);
+  });
+
+  const handleCouponError = (event) => {
+    errorMessage.value = event.detail?.message || 'This coupon is no longer available!';
+    showErrorAlert.value = true;
+  };
+  
+  const closeErrorAlert = () => {
+    showErrorAlert.value = false;
+  };
   const addClippedCoupon = (couponId) => {
     if (!clippedCoupons.value.has(couponId)) {
       // Create a new Set to trigger reactivity
@@ -87,6 +108,9 @@ export function useClippedCoupons() {
     removeClippedCoupon,
     isCouponClipped,
     syncClippedCoupons,
-    cleanupExpiredCoupons
+    cleanupExpiredCoupons,
+    showErrorAlert,
+    errorMessage,
+    closeErrorAlert
   };
 } 

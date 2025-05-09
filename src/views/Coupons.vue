@@ -79,7 +79,6 @@
         :message="`Your search for '${searchQuery}' returned ${displayedCoupons.length} coupons.`"
         color="success"
         position="bottom"
-        duration="3000"
       />
       <ion-toast
         :is-open="showClippedToast"
@@ -119,7 +118,7 @@ import { defineComponent } from 'vue';
 const router = useRouter();
 const { coupons, loading, fetchCoupons, availableCategories, fetchCategories, isMidax } = useCouponDetails();
 const { SignupModal } = useSignupModal();
-const { isCouponClipped, syncClippedCoupons, cleanupExpiredCoupons } = useClippedCoupons();
+const { isCouponClipped, syncClippedCoupons, showErrorAlert, errorMessage, closeErrorAlert } = useClippedCoupons();
 
 const offset = ref(0);
 const limit = ref(isMidax.value ? 20 : 1000);
@@ -218,6 +217,7 @@ const showClipSuccess = ref(false);
 const lastClippedTitle = ref('');
 
 function handleClip(coupon) {
+  // Success toast only - errors are now handled by useClippedCoupons
   lastClippedTitle.value = coupon.title;
   showClipSuccess.value = true;
 }

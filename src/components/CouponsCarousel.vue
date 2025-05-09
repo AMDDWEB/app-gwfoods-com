@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { computed, watch, onMounted, ref } from 'vue';
+import { computed, watch, onMounted, onUnmounted, ref } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { useRouter } from 'vue-router';
 import { useCouponDetails } from '@/composables/useCouponDetails';
@@ -59,9 +59,10 @@ const props = defineProps({
 
 const router = useRouter();
 const { coupons, loading, fetchCoupons } = useCouponDetails();
-const { addClippedCoupon } = useClippedCoupons();
+const { addClippedCoupon, showErrorAlert, errorMessage, closeErrorAlert } = useClippedCoupons();
 const hasMidaxCoupons = ref(import.meta.env.VITE_HAS_MIDAX_COUPONS === "true");
-const hasStoreId = computed(() => !!localStorage.getItem('storeId'));
+const storeId = ref(localStorage.getItem('storeId'));
+const hasStoreId = computed(() => !!storeId.value);
 
 // Only display up to the limit
 const displayCoupons = computed(() => coupons.value.slice(0, props.limit));
@@ -69,6 +70,8 @@ const displayCoupons = computed(() => coupons.value.slice(0, props.limit));
 // Watch for location changes
 watch(() => localStorage.getItem('selectedLocation'), async (newLocation) => {
   if (newLocation) {
+    // Update storeId when location changes
+    storeId.value = localStorage.getItem('storeId');
     await fetchCoupons({ limit: props.limit, offset: 0 });
   }
 });
@@ -110,10 +113,25 @@ const goToCouponsArchive = () => {
   router.push({ name: 'Coupons' });
 };
 
+// Handler function for location change events
+const handleLocationChanged = async (event) => {
+  // Update storeId ref when location changes
+  storeId.value = localStorage.getItem('storeId');
+  await fetchCoupons({ limit: props.limit, offset: 0 });
+};
+
+// Handler for storage events
+const handleStorageChange = (event) => {
+  if (event.key === 'storeId' || event.key === 'selectedLocation') {
+    storeId.value = localStorage.getItem('storeId');
+  }
+};
+
 onMounted(async () => {
-  const hasMidaxCoupons = import.meta.env.VITE_HAS_MIDAX_COUPONS === "true";
+  // Initialize storeId from localStorage
+  storeId.value = localStorage.getItem('storeId');
   
-  if (hasMidaxCoupons) {
+  if (hasMidaxCoupons.value) {
     // Only check for location if using Midax system
     const selectedLocation = localStorage.getItem('selectedLocation');
     if (selectedLocation) {
@@ -125,9 +143,16 @@ onMounted(async () => {
   }
   
   // Listen for location change events
-  window.addEventListener('locationChanged', async () => {
-    await fetchCoupons({ limit: props.limit, offset: 0 });
-  });
+  window.addEventListener('locationChanged', handleLocationChanged);
+  
+  // Listen for storage events to catch direct localStorage changes
+  window.addEventListener('storage', handleStorageChange);
+});
+
+// Clean up event listeners when component is unmounted
+onUnmounted(() => {
+  window.removeEventListener('locationChanged', handleLocationChanged);
+  window.removeEventListener('storage', handleStorageChange);
 });
 </script>
 
