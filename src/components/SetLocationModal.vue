@@ -190,76 +190,7 @@ const handleSearch = () => {
   white-space: nowrap !important;
 }
 
-.app-search-container {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  background: white;
-  border-radius: 8px;
-  margin: 8px 16px;
-  width: auto;
-  height: auto;
-  box-sizing: border-box;
-  justify-content: flex-start;
-}
-
-.app-custom-search-icon {
-  width: 16px;
-  height: 16px;
-  fill: var(--ion-color-medium);
-  margin-right: 8px;
-  flex-shrink: 0;
-  margin-left: 0;
-  padding-left: 0;
-}
-
-.app-search-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  color: var(--ion-color-dark);
-  outline: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-}
-
 .app-search-input::placeholder {
   color: var(--ion-color-medium);
-  font-size: 14px;
-}
-
-ion-toolbar {
-  --padding-start: 0;
-  --padding-end: 0;
-  --padding-top: 0;
-  --padding-bottom: 0;
-  padding: 0;
-}
-
-ion-item {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --padding-top: 12px;
-  --padding-bottom: 12px;
-}
-
-ion-item:last-of-type {
-  --border-width: 0;
-}
-
-ion-label {
-  margin: 0;
-}
-
-ion-label h2 {
-  margin-bottom: 4px;
-}
-
-ion-label p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
 }
 </style>
