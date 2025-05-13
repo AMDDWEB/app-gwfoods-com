@@ -4,17 +4,23 @@ import CouponsApi from '@/axios/apiCoupons';
 // Initialize with stored coupons or empty array
 const storedCoupons = localStorage.getItem('clippedCoupons');
 console.log('storedCoupons: ', storedCoupons)
-const clippedCoupons = ref(new Set(storedCoupons ? JSON.parse(storedCoupons) : []));
-console.log('clippedCoupons/ useClippedCoupons: ', clippedCoupons)
+const parsedCoupons = storedCoupons ? JSON.parse(storedCoupons) : [];
+// const clippedCoupons = ref(new Set(storedCoupons ? JSON.parse(storedCoupons) : []));
+// console.log('clippedCoupons/ useClippedCoupons: ', clippedCoupons)
+const clippedCoupons = ref(new Set(parsedCoupons.map(c => typeof c === 'object' ? c.id : c)));
 
 // State for error alert
 const showErrorAlert = ref(false);
 const errorMessage = ref('This coupon is no longer available!');
 
 // Persist changes to localStorage
-watch(() => Array.from(clippedCoupons.value), (newValue) => {
-  localStorage.setItem('clippedCoupons watch', JSON.stringify(newValue));
-}, { deep: true });
+watch(
+  () => Array.from(clippedCoupons.value),
+  (newValue) => {
+    localStorage.setItem('clippedCoupons', JSON.stringify(newValue));
+  },
+  { deep: true }
+)
 
 export function useClippedCoupons() {
   // Set up event listeners for coupon errors
@@ -54,7 +60,7 @@ export function useClippedCoupons() {
 
   const isCouponClipped = (couponId) => {
     return clippedCoupons.value.has(couponId);
-  };
+  }
 
   // Verify if a coupon is still valid by checking the API
   const verifyCouponValidity = async (couponId) => {
