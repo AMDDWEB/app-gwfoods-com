@@ -118,7 +118,7 @@ import { defineComponent } from 'vue';
 const router = useRouter();
 const { coupons, loading, fetchCoupons, availableCategories, fetchCategories, isMidax } = useCouponDetails();
 const { SignupModal } = useSignupModal();
-const { isCouponClipped, syncClippedCoupons, showErrorAlert, errorMessage, closeErrorAlert } = useClippedCoupons();
+const { isCouponClipped, syncClippedCoupons, showErrorAlert, errorMessage, closeErrorAlert, cleanupExpiredCoupons } = useClippedCoupons();
 
 const offset = ref(0);
 const limit = ref(isMidax.value ? 20 : 1000);
@@ -180,7 +180,13 @@ const displayedCoupons = computed(() => {
 
   // Filter by clipped status
   if (selectedView.value === 'clipped') {
-    filtered = filtered.filter(coupon => isCouponClipped(coupon.id));
+    const clippedCoupons = localStorage.getItem('clippedCoupons')
+      ? JSON.parse(localStorage.getItem('clippedCoupons'))
+      : [];
+
+    const clippedIds = new Set(clippedCoupons.map(c => c.id));
+
+    filtered = filtered.filter(coupon => clippedIds.has(coupon.id));
   }
 
   // Filter by search query

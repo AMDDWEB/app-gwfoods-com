@@ -97,6 +97,7 @@ import BarcodeModal from '@/components/BarcodeModal.vue';
 import apiNotifications from '../axios/apiNotifications.js'; // Import your API for notifactions
 import { onIonViewDidEnter, onIonViewWillEnter } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import CouponsApi from '../axios/apiCoupons.js';
 
 const showBarcodeModal = ref(false);
 const { getLoyaltyNumber, getCardNumber } = useSignupModal();
@@ -117,6 +118,8 @@ const logoUrl = ref(import.meta.env.VITE_PRIMARY_LOGO);
 const hasAppCardCoupons = ref(import.meta.env.VITE_HAS_APPCARD_COUPONS === "true");
 const hasMidaxCoupons = ref(import.meta.env.VITE_HAS_MIDAX_COUPONS === "true");
 const notificationsAvailable = ref(false);
+const storeId = computed(() =>localStorage.getItem('storeId'))
+const cardNumber = computed(() => localStorage.getItem('CardNumber'))
 
 // Add pdfModalState ref
 const pdfModalState = ref({
@@ -178,6 +181,7 @@ onIonViewDidEnter(async () => {
   await fetchLocationData();
   await getData();
   await fetchNotifications();
+  await getClippedCoupons()
 });
 
 onMounted(async () => {
@@ -190,6 +194,7 @@ onMounted(async () => {
   window.addEventListener('userSignedUp', (event) => {
     loyaltyNumber.value = event.detail.loyaltyNumber;
   });
+  await getClippedCoupons()
   await requestNotificationPermission();
 });
 
@@ -198,11 +203,33 @@ onUnmounted(() => {
   window.removeEventListener('forceAppRefresh', handleForceRefresh);
 });
 
+async function getClippedCoupons() {
+
+  if (storeId.value && cardNumber.value) {
+    let params = {
+      location_id: storeId.value,
+      card_number: cardNumber.value,
+      sort_by: 'expires',
+      limit: 100,
+      offset: 0
+    }
+    console.log('params: ', params)
+    const response = await CouponsApi.getClippedCoupons(params);
+    console.log('response: ', response)
+    if (response.data.items) {
+      const clippedCoupons = response.data.items
+      console.log('clippedCoupons home page: ', clippedCoupons)
+      localStorage.setItem('clippedCoupons', JSON.stringify(clippedCoupons))
+    }
+  }
+}
+
 // Add force refresh handler
 async function handleForceRefresh() {
   await checkSelectedLocation();
   await fetchLocationData();
   await getData();
+  await getClippedCoupons()
 }
 
 // Enhance location change handler
@@ -211,6 +238,7 @@ async function handleLocationChange(event) {
     selectedLocation.value = event.detail;
     await fetchLocationData();
     await getData();
+    await getClippedCoupons()
   }
 }
 
@@ -240,6 +268,7 @@ async function handleLocationSelected(location) {
   localStorage.setItem('selectedLocation', JSON.stringify(location));
   await fetchLocationData();
   await getData();
+  await getClippedCoupons()
 }
 
 // Fetch data from APIs
@@ -364,6 +393,7 @@ onIonViewWillEnter(async () => {
       selectedLocation.value = parsedLocation;
       await fetchLocationData();
       await getData();
+      await getClippedCoupons()
     }
   }
 });

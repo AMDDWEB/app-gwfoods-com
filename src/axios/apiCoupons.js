@@ -28,6 +28,14 @@ class CouponsApi {
     return response.data;
   }
 
+  async getClippedCoupons(params) {
+    return await couponsInstance({
+      url: '/card-offers',
+      method: 'GET',
+      params
+    })
+  }
+
   async getCoupons({
     limit = 1000,
     offset = 0,
